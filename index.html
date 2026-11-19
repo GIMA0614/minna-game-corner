@@ -460,6 +460,20 @@
       .del-admin-status { margin-top: 8px; font-size: 13.5px; font-weight: 700; color: var(--ink-soft); text-align: right; }
       .del-admin-status:empty { display: none; }
 
+      /* ---------- 作りたい人向け案内（削除枠の下） ---------- */
+      .make-guide {
+        margin-top: 14px; background: var(--card); border: 2px solid var(--card-line);
+        border-radius: 16px; box-shadow: var(--shadow); padding: 16px 14px 14px; text-align: center;
+      }
+      .make-guide h2 { margin: 0 0 6px; font-size: 19px; font-weight: 800; line-height: 1.4; }
+      .make-guide p { margin: 0 auto; max-width: 560px; font-size: 14.5px; line-height: 1.7; color: var(--ink); }
+      .make-guide-btn {
+        margin: 12px auto 0; display: block; max-width: 420px; text-align: center; text-decoration: none;
+        font-weight: 800; font-size: 15.5px; cursor: pointer;
+        border-radius: 999px; padding: 10px 14px; min-height: 2.8rem;
+        background: #33241a; border: 2px solid #33241a; color: #ffe08a;
+      }
+
       /* ---------- 最下部 ---------- */
       .bottom-note { margin-top: 14px; text-align: center; color: var(--ink-soft); font-size: 12.5px; line-height: 1.7; }
       .bottom-note a { color: var(--ink-soft); }
@@ -579,6 +593,12 @@
             </div>
           </div>
         </div>
+      </section>
+
+      <section class="make-guide" aria-labelledby="make-guide-title">
+        <h2 id="make-guide-title">自分もゲームを作ってみたい人へ</h2>
+        <p>このコーナーのゲームは、AIアシスタント「Muse（ミューズ）」で作られています。作りはじめるための入り口は、Muse導入マニュアルにまとまっています。</p>
+        <a class="make-guide-btn" href="https://x.gd/vW27V" target="_blank" rel="noopener">Muse導入マニュアルを見る</a>
       </section>
 
       <footer class="bottom-note">
