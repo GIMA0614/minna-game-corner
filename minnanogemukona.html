@@ -1,0 +1,1468 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light" />
+    <link rel="icon" href="data:," />
+    <title>みんなのゲームコーナー</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@500;700;800&family=Yusei+Magic&display=swap" rel="stylesheet" />
+    <style>
+      button, [role="button"], select, summary, input:not([type="checkbox"], [type="radio"]) { min-height: 2.25rem; }
+      * { box-sizing: border-box; }
+      :root {
+        color-scheme: light;
+        --ink: #3b2a1c;
+        --ink-soft: #71593d;
+        --sign-bg: #b02a1a;
+        --sign-ink: #fff3d6;
+        --wood1: #d29a58;
+        --wood2: #b57c3a;
+        --wood-edge: #8a5a24;
+        --wood-line: rgba(90, 55, 15, .35);
+        --card: #fffaf0;
+        --card-line: #dcc7a0;
+        --accent: #c73524;
+        --accent-ink: #fff;
+        --blue: #2277d4;
+        --green: #2fa84f;
+        --pop-yellow: #ffd968;
+        --chip-bg: #fffaf0;
+        --chip-on: #33241a;
+        --chip-on-ink: #ffe08a;
+        --field-bg: #fffdf6;
+        --field-line: #c9ae7e;
+        --err: #9c3f27;
+        --ok: #1d7a3a;
+        --shadow: 0 4px 14px rgba(122, 74, 20, .16);
+      }
+      html, body { margin: 0; padding: 0; }
+      body {
+        font-family: "M PLUS Rounded 1c", "Hiragino Maru Gothic ProN", "Hiragino Sans", sans-serif;
+        color: var(--ink);
+        background-color: #f4e8cd;
+        background-image:
+          repeating-linear-gradient(90deg, rgba(122, 74, 20, .055) 0 2px, rgba(122, 74, 20, 0) 2px 56px),
+          linear-gradient(180deg, #f7edd6, #f1e2c2);
+        font-size: 17px;
+        line-height: 1.6;
+        -webkit-text-size-adjust: 100%;
+      }
+      .wrap { max-width: 1060px; margin: 0 auto; padding: 0 10px 16px; }
+
+      /* ---------- 店の看板（初回版：赤い看板＋上下の電球列＋ネオンの動き） ---------- */
+      .signboard {
+        position: relative;
+        margin: 8px 0 0;
+        background: linear-gradient(180deg, #c03221, #a52313);
+        color: var(--sign-ink);
+        border: 3px solid #7c1a0d;
+        border-radius: 16px;
+        padding: 9px 12px 8px;
+        text-align: center;
+        box-shadow: 0 4px 0 #7c1a0d, var(--shadow), inset 0 0 0 2px rgba(255, 240, 200, .22);
+        animation: signPulse 2.4s ease-in-out infinite;
+      }
+      @keyframes signPulse {
+        0%, 100% { box-shadow: 0 4px 0 #7c1a0d, var(--shadow), inset 0 0 0 2px rgba(255, 240, 200, .22), 0 0 10px rgba(255, 190, 90, .18); }
+        50% { box-shadow: 0 4px 0 #7c1a0d, var(--shadow), inset 0 0 0 2px rgba(255, 240, 200, .34), 0 0 22px rgba(255, 190, 90, .42); }
+      }
+      /* 電球の列：看板の上と下の両方に付ける */
+      .bulbs {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 0 4px; pointer-events: none;
+      }
+      .bulbs--top { margin-bottom: 5px; }
+      .bulbs--bottom { margin-top: 6px; }
+      .bulbs span {
+        flex: 0 0 auto; width: 9px; height: 9px; border-radius: 999px;
+        background: #ffd968;
+        box-shadow: 0 0 8px 2px rgba(255, 217, 104, .85), 0 0 14px rgba(255, 170, 80, .45);
+        animation: bulbChase 1.44s ease-in-out infinite;
+      }
+      @keyframes bulbChase {
+        0%, 100% { opacity: 1; transform: scale(1.18); background: #ffecab; box-shadow: 0 0 10px 3px rgba(255, 217, 104, .95), 0 0 20px 4px rgba(255, 170, 80, .5); }
+        50% { opacity: .3; transform: scale(.8); background: #e88a4a; box-shadow: 0 0 2px 0 rgba(255, 170, 80, .2); }
+      }
+      .bulbs span:nth-child(1) { animation-delay: 0s; }
+      .bulbs span:nth-child(2) { animation-delay: .09s; }
+      .bulbs span:nth-child(3) { animation-delay: .18s; }
+      .bulbs span:nth-child(4) { animation-delay: .27s; }
+      .bulbs span:nth-child(5) { animation-delay: .36s; }
+      .bulbs span:nth-child(6) { animation-delay: .45s; }
+      .bulbs span:nth-child(7) { animation-delay: .54s; }
+      .bulbs span:nth-child(8) { animation-delay: .63s; }
+      .bulbs span:nth-child(9) { animation-delay: .72s; }
+      .bulbs span:nth-child(10) { animation-delay: .81s; }
+      .bulbs span:nth-child(11) { animation-delay: .9s; }
+      .bulbs span:nth-child(12) { animation-delay: .99s; }
+      .bulbs span:nth-child(13) { animation-delay: 1.08s; }
+      .bulbs span:nth-child(14) { animation-delay: 1.17s; }
+      .bulbs span:nth-child(15) { animation-delay: 1.26s; }
+      .bulbs span:nth-child(16) { animation-delay: 1.35s; }
+      .signboard h1 {
+        margin: 2px 0 0; font-size: clamp(27px, 7vw, 42px); font-weight: 800; letter-spacing: .03em; line-height: 1.25;
+        color: var(--sign-ink); text-shadow: 0 2px 0 rgba(90, 15, 5, .45);
+      }
+      /* 「ゲームコーナー」まわりのネオン：文字が順にふわっと光る */
+      .signboard h1 span {
+        display: inline-block;
+        text-shadow: 0 2px 0 rgba(90, 15, 5, .45), 0 0 5px rgba(255, 243, 214, .3);
+        animation: neonWave 2.4s ease-in-out infinite;
+      }
+      @keyframes neonWave {
+        0%, 100% { text-shadow: 0 2px 0 rgba(90, 15, 5, .45), 0 0 5px rgba(255, 243, 214, .3); }
+        50% { text-shadow: 0 2px 0 rgba(90, 15, 5, .45), 0 0 13px rgba(255, 233, 168, .98), 0 0 26px rgba(255, 190, 90, .7); }
+      }
+      .signboard h1 span:nth-child(1) { animation-delay: 0s; }
+      .signboard h1 span:nth-child(2) { animation-delay: .11s; }
+      .signboard h1 span:nth-child(3) { animation-delay: .22s; }
+      .signboard h1 span:nth-child(4) { animation-delay: .33s; }
+      .signboard h1 span:nth-child(5) { animation-delay: .44s; }
+      .signboard h1 span:nth-child(6) { animation-delay: .55s; }
+      .signboard h1 span:nth-child(7) { animation-delay: .66s; }
+      .signboard h1 span:nth-child(8) { animation-delay: .77s; }
+      .signboard h1 span:nth-child(9) { animation-delay: .88s; }
+      .signboard h1 span:nth-child(10) { animation-delay: .99s; }
+      .signboard h1 span:nth-child(11) { animation-delay: 1.1s; }
+      .signboard p {
+        margin: 2px 0 0; font-size: clamp(14px, 3.8vw, 17px); font-weight: 700;
+        color: rgba(255, 243, 214, .92);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .signboard, .bulbs span, .signboard h1 span { animation: none; }
+        .bulbs span { opacity: 1; }
+      }
+
+      /* ---------- ツールバー ---------- */
+      .toolbar { margin: 8px 0 0; display: grid; gap: 7px; }
+      .searchbox { position: relative; }
+      .searchbox input {
+        width: 100%; font: inherit; font-size: 17px;
+        padding: 8px 14px 8px 42px;
+        border: 2px solid var(--field-line); border-radius: 999px;
+        background: var(--field-bg); color: var(--ink);
+      }
+      .searchbox .mag { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); width: 20px; height: 20px; color: var(--ink-soft); pointer-events: none; }
+      .seg { display: flex; gap: 4px; background: var(--card); border: 2px solid var(--card-line); border-radius: 999px; padding: 3px; }
+      .seg button {
+        flex: 1; font: inherit; font-weight: 800; font-size: 15.5px;
+        border: 0; border-radius: 999px; background: transparent; color: var(--ink-soft);
+        padding: 6px 4px; cursor: pointer; min-height: 2.35rem;
+      }
+      .seg button[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); }
+      .makerchips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .makerchips:empty { display: none; }
+      .makerchips .lbl { font-weight: 800; font-size: 14.5px; color: var(--ink-soft); align-self: center; }
+      /* ---------- ジャンルスライダー ---------- */
+      .genre-slider-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; }
+      .genre-slider {
+        flex: 1 1 auto; min-width: 0;
+        display: flex; gap: 8px; align-items: center;
+        overflow-x: auto; scroll-snap-type: x mandatory;
+        padding: 3px 0; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+      }
+      .genre-slider::-webkit-scrollbar { display: none; }
+      .genre-slider::before, .genre-slider::after { content: ""; flex: 0 0 calc(50% - min(120px, 33%)); }
+      .gs-item {
+        flex: 0 0 min(240px, 66%); height: 56px;
+        scroll-snap-align: center; scroll-snap-stop: always;
+        position: relative; overflow: hidden; border-radius: 11px;
+        display: flex; align-items: center; justify-content: center;
+        padding: 6px 12px; text-align: center; cursor: pointer;
+        color: #fff; font-weight: 800; font-size: 17px; line-height: 1.25;
+        text-shadow: 0 2px 0 rgba(0, 0, 0, .35), 0 3px 8px rgba(0, 0, 0, .4);
+        opacity: .45; transform: scale(.92);
+        transition: opacity .25s ease, transform .25s ease, box-shadow .25s ease;
+        box-shadow: inset 0 0 0 2px rgba(255, 255, 255, .25), var(--shadow);
+      }
+      .gs-item.is-active {
+        opacity: 1; transform: scale(1); font-size: 19.5px;
+        box-shadow: 0 0 0 3px #b98d4f, 0 4px 10px rgba(122, 74, 20, .3);
+      }
+      .gs-arrow {
+        flex: 0 0 auto; width: 36px; height: 36px; min-height: 36px; border-radius: 50%;
+        border: 2px solid var(--field-line); background: var(--card); color: var(--ink);
+        display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
+        box-shadow: var(--shadow);
+      }
+      .gs-arrow svg { width: 18px; height: 18px; }
+      .gs-arrow:disabled { opacity: .3; cursor: default; box-shadow: none; }
+      .genre-now { text-align: center; font-size: 14.5px; font-weight: 700; color: var(--ink-soft); margin-top: 0; line-height: 1.4; }
+      .genre-now b { color: var(--ink); font-size: 16px; }
+      a:focus-visible, button:focus-visible, input:focus-visible, textarea:focus-visible, .genre-slider:focus-visible { outline: 3px solid var(--blue); outline-offset: 2px; }
+      ::placeholder { color: var(--ink-soft); opacity: .8; }
+      .chip {
+        font: inherit; font-size: 15px; font-weight: 700;
+        border: 2px solid var(--card-line); background: var(--chip-bg); color: var(--ink);
+        border-radius: 999px; padding: 6px 14px; cursor: pointer; min-height: 2.25rem;
+      }
+      .chip[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); border-color: var(--chip-on); }
+
+      /* ---------- 棚 ---------- */
+      #shelves { display: grid; gap: 12px; margin-top: 10px; }
+      #shelves:empty { margin-top: 0; }
+      .shelf { margin-top: 0; }
+      .shelf-label {
+        display: inline-flex; align-items: center; gap: 8px;
+        background: #fff8e8;
+        color: var(--ink); font-weight: 400; font-size: 19px;
+        font-family: "Yusei Magic", "M PLUS Rounded 1c", sans-serif;
+        padding: 5px 14px 6px 12px; border-radius: 10px 10px 0 0;
+        border: 2px solid #a67c44; border-bottom: 0;
+        box-shadow: 3px -3px 6px rgba(122, 74, 20, .12);
+        margin-left: 8px; position: relative; z-index: 1; line-height: 1.3;
+      }
+      .shelf-label .count { font-size: 13px; font-family: "M PLUS Rounded 1c", sans-serif; font-weight: 800; background: #8a5f2e; color: #fff; border-radius: 999px; padding: 1px 9px; }
+      .shelf-body {
+        background: linear-gradient(180deg, #fffdf6, #fff8ea 60%, #fdf0d7);
+        border: 2px solid var(--card-line);
+        border-radius: 0 12px 0 0;
+        padding: 18px 18px 0;
+        box-shadow: var(--shadow);
+      }
+      .shelf-board {
+        height: 20px; margin: 14px -18px 0;
+        background:
+          repeating-linear-gradient(93deg, transparent 0 90px, var(--wood-line) 90px 92px),
+          repeating-linear-gradient(0deg, transparent 0 6px, rgba(70, 42, 12, .13) 6px 7px),
+          linear-gradient(180deg, var(--wood1) 0%, var(--wood2) 62%, var(--wood-edge) 100%);
+        border-top: 3px solid #e8b877;
+        box-shadow: 0 6px 8px -4px rgba(122, 74, 20, .35), inset 0 -4px 6px rgba(0,0,0,.18);
+        border-radius: 0 0 4px 4px;
+      }
+      /* パッケージを並べるグリッド：列は等幅で、本数に関わらず1列分の大きさで並ぶ */
+      .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 22px 20px; align-items: start; }
+      @media (min-width: 620px) { .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 26px 24px; } }
+      @media (min-width: 940px) { .grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+      /* ---------- パッケージ ---------- */
+      .pkg { display: flex; flex-direction: column; min-width: 0; }
+      .box {
+        position: relative;
+        aspect-ratio: 3 / 4;
+        border-radius: 5px 9px 9px 5px;
+        overflow: visible;
+        box-shadow: var(--shadow), inset 0 0 0 1px rgba(0,0,0,.18);
+        background: #888;
+      }
+      .box::before { /* 背表紙っぽい左の折り目 */
+        content: ""; position: absolute; left: 7px; top: 0; bottom: 0; width: 2px;
+        background: rgba(255,255,255,.4); box-shadow: 2px 0 3px rgba(0,0,0,.25); z-index: 3;
+      }
+      .box::after { /* 箱の角の丸み・光沢 */
+        content: ""; position: absolute; inset: 0; border-radius: inherit; z-index: 3; pointer-events: none;
+        background: linear-gradient(115deg, rgba(255,255,255,.20) 0%, rgba(255,255,255,0) 34%);
+      }
+      .band {
+        position: absolute; bottom: 0; left: 0; right: 0; z-index: 4;
+        background: rgba(20, 14, 8, .88); color: #ffe9a8;
+        font-weight: 800; font-size: clamp(11.5px, 3.2vw, 14px); letter-spacing: .06em;
+        padding: 5px 8px 5px 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        border-radius: 0 0 9px 5px;
+      }
+      .band small { color: #fff; opacity: .65; font-size: .78em; margin-right: 6px; letter-spacing: .12em; }
+      .band a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
+      .pkg-maker a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+      .cover { position: absolute; inset: 0; border-radius: inherit; overflow: hidden; }
+      .cover img { width: 100%; height: 100%; object-fit: cover; display: block; }
+      .gen-cover { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 14px 12px 38px; text-align: center; }
+      .gen-cover .gtitle {
+        color: #fff; font-weight: 800; line-height: 1.3;
+        font-size: clamp(19px, 5.4vw, 26px);
+        text-shadow: 0 2px 0 rgba(0,0,0,.35), 0 4px 10px rgba(0,0,0,.4);
+        overflow-wrap: anywhere;
+        display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden;
+      }
+      .gen-cover .ggenre {
+        margin-top: 10px; background: rgba(255,255,255,.92); color: #333;
+        font-size: 12.5px; font-weight: 800; border-radius: 999px; padding: 2px 12px;
+      }
+      /* ジャンル別パターン */
+      .pat-stripes { background-image: repeating-linear-gradient(45deg, rgba(255,255,255,.16) 0 14px, rgba(255,255,255,0) 14px 28px); }
+      .pat-dots    { background-image: radial-gradient(rgba(255,255,255,.28) 3.2px, transparent 3.8px); background-size: 24px 24px; }
+      .pat-diag    { background-image: repeating-linear-gradient(-45deg, rgba(0,0,0,.14) 0 10px, rgba(0,0,0,0) 10px 26px), repeating-linear-gradient(45deg, rgba(255,255,255,.10) 0 6px, rgba(255,255,255,0) 6px 20px); }
+      .pat-grid    { background-image: linear-gradient(rgba(255,255,255,.18) 2px, transparent 2px), linear-gradient(90deg, rgba(255,255,255,.18) 2px, transparent 2px); background-size: 26px 26px; }
+      .pat-stars   { background-image: radial-gradient(rgba(255,255,255,.5) 1.6px, transparent 2.2px), radial-gradient(rgba(255,255,255,.3) 2.6px, transparent 3.4px); background-size: 34px 34px, 58px 58px; background-position: 0 0, 14px 20px; }
+      .pat-wave    { background-image: repeating-radial-gradient(circle at 50% 130%, rgba(255,255,255,.16) 0 12px, rgba(255,255,255,0) 12px 30px); }
+      .pat-check   { background-image: conic-gradient(rgba(255,255,255,.14) 25%, transparent 0 50%, rgba(255,255,255,.14) 0 75%, transparent 0); background-size: 30px 30px; }
+      .pat-zig     { background-image: repeating-linear-gradient(135deg, rgba(255,255,255,.15) 0 8px, transparent 8px 16px), repeating-linear-gradient(-135deg, rgba(255,255,255,.15) 0 8px, transparent 8px 16px); background-size: 22px 22px; }
+
+      .del-btn {
+        flex: 0 0 auto;
+        display: inline-flex; align-items: center; gap: 4px;
+        font: inherit; font-size: 13.5px; font-weight: 800; line-height: 1;
+        color: #9c3f27; background: #fffaf0;
+        border: 2px solid rgba(156, 63, 39, .55); border-radius: 999px;
+        padding: 7px 14px; min-height: 2.1rem; cursor: pointer;
+      }
+      .del-btn:hover, .del-btn:focus-visible { background: #fdf0e6; border-color: #9c3f27; }
+      .del-btn svg { width: 14px; height: 14px; flex: 0 0 auto; }
+      /* ---------- 削除モーダル ---------- */
+      .modal-overlay {
+        position: fixed; inset: 0; z-index: 60;
+        background: rgba(59, 42, 28, .58);
+        display: flex; align-items: center; justify-content: center;
+        padding: 18px 14px;
+      }
+      .modal-card {
+        width: 100%; max-width: 430px; max-height: calc(100vh - 36px); overflow-y: auto;
+        background: var(--card); border: 2px solid var(--card-line); border-radius: 16px;
+        box-shadow: 0 14px 40px rgba(59, 42, 28, .35);
+        padding: 22px 20px 18px; text-align: center;
+      }
+      .modal-card h2 { margin: 0 0 8px; font-size: 20px; font-weight: 800; line-height: 1.4; }
+      .modal-card p { margin: 8px 0 0; font-size: 15.5px; line-height: 1.65; color: var(--ink); overflow-wrap: anywhere; }
+      .modal-card p.sub { color: var(--ink-soft); font-size: 14px; }
+      .modal-card .modal-game { font-weight: 800; }
+      .modal-actions { display: grid; gap: 9px; margin-top: 18px; }
+      .modal-btn {
+        font: inherit; font-weight: 800; font-size: 16px; cursor: pointer;
+        border-radius: 999px; padding: 11px 14px; min-height: 2.9rem;
+        border: 2px solid var(--field-line); background: var(--field-bg); color: var(--ink);
+        text-decoration: none; display: block; text-align: center;
+      }
+      .modal-btn--insta { background: #33241a; border-color: #33241a; color: #ffe08a; }
+      .modal-btn--danger { background: linear-gradient(180deg, #f0563a, #d93a24); border-color: #b02a18; color: #fff; box-shadow: 0 3px 0 #b02a18; }
+      .modal-btn--danger:active { transform: translateY(2px); box-shadow: 0 1px 0 #b02a18; }
+      .modal-btn:disabled { opacity: .55; cursor: wait; }
+      .modal-admin-link {
+        margin-top: 16px; text-align: right;
+      }
+      .modal-admin-link button {
+        font: inherit; font-size: 12.5px; font-weight: 700; color: var(--ink-soft);
+        background: none; border: 0; padding: 4px 2px; min-height: 1.6rem;
+        text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+      }
+      .modal-key-field { margin-top: 14px; text-align: left; }
+      .modal-key-field label { display: block; font-weight: 800; font-size: 14.5px; margin-bottom: 5px; }
+      .modal-key-field input {
+        width: 100%; font: inherit; font-size: 16.5px; color: var(--ink);
+        background: var(--field-bg); border: 2px solid var(--field-line); border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .modal-msg { display: none; margin-top: 12px; border-radius: 10px; padding: 9px 11px; font-size: 14.5px; font-weight: 700; line-height: 1.55; text-align: left; }
+      .modal-msg.is-err { display: block; background: rgba(179, 35, 27, .1); border: 2px solid var(--err); color: var(--err); }
+      .modal-msg.is-ok { display: block; background: rgba(29, 122, 58, .12); border: 2px solid var(--ok); color: var(--ok); text-align: center; }
+      .pkg-info { padding: 6px 2px 0; display: flex; flex-direction: column; gap: 2px; flex: 1; }
+      .pkg-title { font-size: 17.5px; font-weight: 800; line-height: 1.35; overflow-wrap: anywhere; }
+      .pkg-maker { font-size: 14.5px; font-weight: 700; color: var(--ink-soft); margin-top: auto; padding-top: 4px; display: flex; align-items: center; gap: 8px; }
+      .pkg-maker-text { flex: 1 1 auto; min-width: 0; overflow-wrap: anywhere; }
+      .pkg-maker b { color: var(--ink); }
+      .pkg-date { font-size: 12.5px; color: var(--ink-soft); line-height: 1.4; }
+      .pkg-meta { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+      .pkg-clicks { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); line-height: 1.4; white-space: nowrap; }
+      .box[data-game-box] { cursor: pointer; }
+      .play {
+        margin-top: 6px; display: block; text-align: center; text-decoration: none;
+        background: radial-gradient(120% 95% at 30% 16%, #ff9a7a 0%, rgba(255, 154, 122, 0) 46%), linear-gradient(180deg, #f0563a, #d93a24); color: #fff;
+        font-weight: 800; font-size: 17px; padding: 8px 8px; border-radius: 999px;
+        border: 2px solid #b02a18;
+        box-shadow: 0 4px 0 #b02a18, 0 6px 12px rgba(122, 74, 20, .22), inset 0 2px 3px rgba(255, 255, 255, .45), inset 0 -3px 5px rgba(0, 0, 0, .18);
+        min-height: 2.75rem;
+      }
+      .play:active { transform: translateY(3px); box-shadow: 0 1px 0 #b02a18, inset 0 2px 3px rgba(255, 255, 255, .45), inset 0 -3px 5px rgba(0, 0, 0, .18); }
+
+      /* ---------- 登録カウンター（ページ最下部に1か所） ---------- */
+      .counter {
+        margin-top: 14px; background: var(--card); border: 2px solid var(--card-line);
+        border-radius: 16px; box-shadow: var(--shadow); overflow: hidden;
+      }
+      .counter-head {
+        background: linear-gradient(180deg, #a97e46, #8a5f2e);
+        color: #fff6e0; font-weight: 800; font-size: 20px; padding: 9px 14px;
+        border-bottom: 3px solid #75501f; line-height: 1.35;
+      }
+      .counter-head small { display: block; font-size: 13.5px; font-weight: 700; opacity: .85; margin-top: 1px; }
+      form { padding: 12px; display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; }
+      .field { min-width: 0; }
+      .field label { display: block; font-weight: 800; font-size: 15.5px; margin-bottom: 4px; }
+      .field label .req { color: var(--accent); font-size: 13px; margin-left: 4px; }
+      .field label .opt { color: var(--ink-soft); font-size: 13px; margin-left: 4px; font-weight: 700; }
+      .field input, .field select, .field textarea {
+        width: 100%; font: inherit; font-size: 16.5px; color: var(--ink);
+        background: var(--field-bg); border: 2px solid var(--field-line); border-radius: 10px;
+        padding: 9px 12px;
+      }
+      .field textarea { min-height: 74px; resize: vertical; }
+      .field .hint { font-size: 13px; color: var(--ink-soft); margin-top: 3px; }
+      .field .cnt { font-size: 12.5px; color: var(--ink-soft); text-align: right; margin-top: 2px; }
+      .fetch-status { display: none; font-size: 13.5px; font-weight: 700; margin-top: 6px; border-radius: 8px; padding: 7px 10px; line-height: 1.5; }
+      .fetch-status.is-loading { display: block; background: rgba(107, 88, 68, .12); color: var(--ink-soft); }
+      .fetch-status.is-ok { display: block; background: rgba(29, 122, 58, .12); color: var(--ok); }
+      .fetch-status.is-fail { display: block; background: rgba(179, 35, 27, .08); color: var(--err); }
+      .form-err { display: none; background: rgba(179, 35, 27, .1); border: 2px solid var(--err); color: var(--err); font-weight: 700; border-radius: 10px; padding: 10px 12px; font-size: 15px; }
+      .form-ok { display: none; background: rgba(29, 122, 58, .12); border: 2px solid var(--ok); color: var(--ok); font-weight: 700; border-radius: 10px; padding: 10px 12px; font-size: 15px; }
+      .submit {
+        font: inherit; font-weight: 800; font-size: 18px; cursor: pointer;
+        background: linear-gradient(180deg, #f0563a, #d93a24); color: #fff;
+        border: 2px solid #b02a18; border-radius: 999px; padding: 12px; box-shadow: 0 4px 0 #b02a18, 0 6px 12px rgba(122, 74, 20, .22);
+        min-height: 3rem;
+      }
+      .submit:active { transform: translateY(3px); box-shadow: 0 1px 0 #b02a18; }
+      .submit:disabled { opacity: .55; cursor: wait; }
+
+      /* ---------- 状態表示 ---------- */
+      .state {
+        margin-top: 10px; text-align: center; background: var(--card);
+        border: 2px dashed var(--card-line); border-radius: 14px; padding: 18px 14px;
+      }
+      .state .big { font-size: 19px; font-weight: 800; }
+      .state p { color: var(--ink-soft); margin: 6px 0 0; }
+      .reload-btn {
+        margin-top: 14px; font: inherit; font-weight: 800; font-size: 16px; cursor: pointer;
+        background: #33241a; color: #ffe08a; border: 0; border-radius: 999px; padding: 10px 26px;
+        min-height: 2.75rem;
+      }
+      .spinner { width: 34px; height: 34px; margin: 0 auto 10px; border-radius: 50%; border: 5px solid var(--card-line); border-top-color: var(--accent); }
+
+      /* ---------- 削除枠（登録フォームの直下に独立して1か所） ---------- */
+      .del-section {
+        margin-top: 14px; background: var(--card); border: 2px solid var(--card-line);
+        border-radius: 16px; box-shadow: var(--shadow); overflow: hidden;
+      }
+      .del-head {
+        background: linear-gradient(180deg, #7a6650, #5d4936);
+        color: #fff6e0; font-weight: 800; font-size: 20px; padding: 9px 14px;
+        border-bottom: 3px solid #463522; line-height: 1.35;
+      }
+      .del-head small { display: block; font-size: 13.5px; font-weight: 700; opacity: .85; margin-top: 1px; }
+      .del-body { padding: 12px; display: grid; gap: 12px; }
+      .del-note { padding-top: 2px; }
+      .del-note h3 { margin: 0 0 5px; font-size: 16.5px; font-weight: 800; }
+      .del-note p { margin: 0; font-size: 14.5px; line-height: 1.7; color: var(--ink); }
+      .del-caution {
+        margin-top: 10px; padding: 9px 11px;
+        background: rgba(179, 35, 27, .07);
+        border: 1.5px solid rgba(156, 63, 39, .45); border-radius: 10px;
+        font-size: 14.5px; line-height: 1.7; color: var(--ink); font-weight: 700;
+      }
+      .del-insta-btn {
+        margin-top: 10px; display: block; text-align: center; text-decoration: none;
+        font-weight: 800; font-size: 15.5px; cursor: pointer;
+        border-radius: 999px; padding: 10px 14px; min-height: 2.8rem;
+        background: #33241a; border: 2px solid #33241a; color: #ffe08a;
+      }
+      .del-admin { text-align: right; }
+      .del-admin > button {
+        font: inherit; font-size: 12.5px; font-weight: 700; color: var(--ink-soft);
+        background: none; border: 0; padding: 4px 2px; min-height: 1.6rem;
+        text-decoration: underline; text-underline-offset: 3px; cursor: pointer;
+      }
+      .del-admin-form {
+        margin-top: 8px; text-align: left; background: rgba(107, 88, 68, .07);
+        border: 2px solid var(--card-line); border-radius: 12px; padding: 12px;
+      }
+      .del-admin-form label { display: block; font-weight: 800; font-size: 14.5px; margin-bottom: 5px; }
+      .del-admin-form input {
+        width: 100%; font: inherit; font-size: 16.5px; color: var(--ink);
+        background: var(--field-bg); border: 2px solid var(--field-line); border-radius: 10px;
+        padding: 10px 12px;
+      }
+      .del-admin-form .hint { font-size: 13px; color: var(--ink-soft); margin-top: 5px; line-height: 1.55; }
+      .del-admin-actions { display: grid; gap: 8px; margin-top: 12px; }
+      .del-admin-status { margin-top: 8px; font-size: 13.5px; font-weight: 700; color: var(--ink-soft); text-align: right; }
+      .del-admin-status:empty { display: none; }
+
+      /* ---------- 作りたい人向け案内（削除枠の下） ---------- */
+      .make-guide {
+        margin-top: 14px; background: var(--card); border: 2px solid var(--card-line);
+        border-radius: 16px; box-shadow: var(--shadow); padding: 16px 14px 14px; text-align: center;
+      }
+      .make-guide h2 { margin: 0 0 6px; font-size: 19px; font-weight: 800; line-height: 1.4; }
+      .make-guide p { margin: 0 auto; max-width: 560px; font-size: 14.5px; line-height: 1.7; color: var(--ink); }
+      .make-guide-btn {
+        margin: 12px auto 0; display: block; max-width: 420px; text-align: center; text-decoration: none;
+        font-weight: 800; font-size: 15.5px; cursor: pointer;
+        border-radius: 999px; padding: 10px 14px; min-height: 2.8rem;
+        background: #33241a; border: 2px solid #33241a; color: #ffe08a;
+      }
+
+      /* ---------- 最下部 ---------- */
+      .bottom-note { margin-top: 14px; text-align: center; color: var(--ink-soft); font-size: 12.5px; line-height: 1.7; }
+      .bottom-note a { color: var(--ink-soft); }
+      .hidden { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <header class="signboard">
+        <div class="bulbs bulbs--top" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+        <h1><span>み</span><span>ん</span><span>な</span><span>の</span><span>ゲ</span><span>ー</span><span>ム</span><span>コ</span><span>ー</span><span>ナ</span><span>ー</span></h1>
+        <p>Museで作ったゲームを、みんなで共有する場所</p>
+        <div class="bulbs bulbs--bottom" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </header>
+
+      <div class="toolbar">
+        <div class="searchbox">
+          <svg class="mag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21"/></svg>
+          <input id="search" type="search" placeholder="タイトル・メーカー名でさがす" aria-label="ゲームを検索" autocomplete="off" />
+        </div>
+        <div class="seg" role="group" aria-label="棚の見かた">
+          <button type="button" data-view="new" aria-pressed="true">新着の棚</button>
+          <button type="button" data-view="genre" aria-pressed="false">ジャンル別</button>
+          <button type="button" data-view="maker" aria-pressed="false">メーカー別</button>
+        </div>
+        <div class="makerchips" id="makerchips" aria-label="メーカーで絞り込み"></div>
+      </div>
+
+      <main id="shelves" aria-live="polite"></main>
+
+      <div class="state" id="state-loading">
+        <div class="spinner" id="spinner" aria-hidden="true"></div>
+        <div class="big">棚を読み込んでいます…</div>
+      </div>
+      <div class="state hidden" id="state-error">
+        <div class="big">読み込めませんでした</div>
+        <p>通信の具合で棚の中身が取れませんでした。もう一度お試しください。</p>
+        <button type="button" class="reload-btn" id="reload-btn">再読み込み</button>
+      </div>
+      <div class="state hidden" id="state-empty">
+        <div class="big">まだゲームが並んでいません</div>
+        <p>下のカウンターから、最初の1本を貼ってください。</p>
+      </div>
+      <div class="state hidden" id="state-noresult">
+        <div class="big">見つかりませんでした</div>
+        <p>検索のことばやメーカーの絞り込みを変えてみてください。</p>
+      </div>
+      <div class="state hidden" id="state-nonew">
+        <div class="big">新着はまだありません</div>
+        <p>直近7日間に登録されたゲームはありません。過去のゲームは「ジャンル別」「メーカー別」の棚で見られます。</p>
+      </div>
+
+
+
+      <section class="counter" id="counter" aria-labelledby="counter-title">
+        <div class="counter-head"><span id="counter-title">ゲームを貼る（登録カウンター）</span><small>作ったゲームのURLを貼ると、みんなの棚に並びます</small></div>
+        <form id="reg-form" novalidate>
+          <div class="field">
+            <label for="f-url">ゲームのURL<span class="req">必須</span></label>
+            <input id="f-url" type="url" inputmode="url" placeholder="https://…" autocomplete="off" />
+            <div class="hint">https:// で始まるURLだけ貼れます。貼るとタイトルを自動で取りに行きます。</div>
+            <div class="fetch-status" id="fetch-status" role="status" aria-live="polite"></div>
+          </div>
+          <div class="field">
+            <label for="f-title">ゲームのタイトル<span class="req">必須</span></label>
+            <input id="f-title" type="text" maxlength="80" placeholder="例：ドーナツキャッチ" autocomplete="off" />
+            <div class="hint">ゲームのURLを貼ると自動で入ることがあります。入ったあとも手で直せます。</div>
+            <div class="cnt"><span id="c-title">0</span> / 80</div>
+          </div>
+          <div class="field">
+            <label for="f-author">メーカー名（作った人の名前）<span class="req">必須</span></label>
+            <input id="f-author" type="text" maxlength="40" placeholder="例：すぎもと" autocomplete="off" />
+            <div class="cnt"><span id="c-author">0</span> / 40</div>
+          </div>
+          <div class="field">
+            <label for="f-maker-url">メーカーのSNSリンク<span class="opt">任意</span></label>
+            <input id="f-maker-url" type="url" inputmode="url" placeholder="https://www.instagram.com/…" autocomplete="off" />
+            <div class="hint">入れると、メーカー名からSNSへ飛べるようになります。無くても登録できます。</div>
+          </div>
+          <div class="field">
+            <label id="genre-label">ジャンル</label>
+            <div class="genre-slider-wrap">
+              <button type="button" class="gs-arrow" id="gs-prev" aria-label="前のジャンル"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14.5 5 8 12l6.5 7"/></svg></button>
+              <div class="genre-slider" id="genre-slider" role="listbox" aria-labelledby="genre-label" tabindex="0"></div>
+              <button type="button" class="gs-arrow" id="gs-next" aria-label="次のジャンル"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9.5 5 16 12l-6.5 7"/></svg></button>
+            </div>
+            <div class="genre-now">選択中：<b id="genre-now-name">その他</b> <span id="genre-now-pos"></span></div>
+            <input id="f-genre" type="hidden" value="その他" />
+            <div class="hint">左右にスライド／スワイプして、真ん中に来たジャンルが選ばれます。色と模様はパッケージ絵の予告です。</div>
+          </div>
+          <div class="form-err" id="form-err" role="alert"></div>
+          <div class="form-ok" id="form-ok" role="status"></div>
+          <button type="submit" class="submit" id="submit-btn">棚に並べる</button>
+        </form>
+      </section>
+
+      <section class="del-section" id="del-section" aria-labelledby="del-title">
+        <div class="del-head"><span id="del-title">ゲームを削除する</span><small>削除できるのは管理者だけです</small></div>
+        <div class="del-body">
+          <div class="del-note">
+            <h3>削除の依頼について</h3>
+            <p>棚のゲームを削除できるのは管理者だけです。消したいゲームがある方は、開発者（すぎもと）に依頼すれば削除してもらえます。InstagramのDMで、消したいゲームの名前を添えてご連絡ください。</p>
+            <p class="del-caution">不適切とこちらが判断したものは、こちらで削除させていただきます。ご了承ください。</p>
+            <a class="del-insta-btn" href="https://www.instagram.com/sugimasa_insta/" target="_blank" rel="noopener">すぎもとのInstagramへ（@sugimasa_insta）</a>
+          </div>
+          <div class="del-admin">
+            <button type="button" id="del-section-admin-link">管理者の方はこちら</button>
+            <div class="del-admin-status" id="del-admin-status"></div>
+            <div class="del-admin-form hidden" id="del-admin-form">
+              <label for="del-section-key-input">管理者キー</label>
+              <input id="del-section-key-input" type="password" autocomplete="off" />
+              <div class="hint">正しいキーを保存すると管理者モードになり、棚の各パッケージのメーカー行の右端に削除ボタンが表示されます。キーが違う場合は、削除を実行したときに判定されて保存が消去されます。</div>
+              <div class="modal-msg" id="del-section-key-msg"></div>
+              <div class="del-admin-actions">
+                <button type="button" class="modal-btn modal-btn--danger" id="del-section-key-save">キーを保存する</button>
+                <button type="button" class="modal-btn" id="del-section-key-cancel">閉じる</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="make-guide" aria-labelledby="make-guide-title">
+        <h2 id="make-guide-title">自分もゲームを作ってみたい人へ</h2>
+        <p>このコーナーのゲームは、AIアシスタント「Muse（ミューズ）」で作られています。作りはじめるための入り口は、Muse導入マニュアルにまとまっています。</p>
+        <a class="make-guide-btn" href="https://muse.ai/s/musedao-ru-maniyuaru-gemudukuribian-fxt6yr3xkxaxyxkxb/cq1scJJq6iHZpy0QbzVSL8w8CDc6PgoUYbUzX0wCBBk" target="_blank" rel="noopener">ゲームづくり編マニュアルを見る</a>
+      </section>
+
+      <footer class="bottom-note">
+        <div>並んだゲームの削除・編集は管理側（Supabase）で行っています。</div>
+        <div>開発者：すぎもと ｜ <a href="https://www.instagram.com/sugimasa_insta/" target="_blank" rel="noopener">@sugimasa_insta</a></div>
+      </footer>
+    </div>
+
+    <div class="modal-overlay hidden" id="del-modal" role="dialog" aria-modal="true" aria-labelledby="del-modal-title">
+      <div class="modal-card" id="del-modal-card"></div>
+    </div>
+
+    <script>
+      "use strict";
+      var SUPABASE_URL = "https://ftqsdpantfgepdwbjdek.supabase.co";
+      var API_KEY = "sb_publishable_BZ2IrdeaB4399wZf_GMK_g_gTJXg_HH";
+      var ENDPOINT = SUPABASE_URL + "/rest/v1/games";
+      var SELECT = "id,title,url,description,author_name,maker_url,genre,thumbnail_url,created_at,clicks";
+
+      var games = [];
+      var view = "new";           // new | genre | maker
+      var makerFilter = "";       // "" = すべてのメーカー
+      var query = "";
+      var thumbAttempted = {};    // Microlinkサムネ取得を試したゲームURL（1回だけ）
+      var thumbCache = {};        // ゲームURL -> 取得できた画像URL
+
+      var shelvesEl = document.getElementById("shelves");
+      var elLoading = document.getElementById("state-loading");
+      var elError = document.getElementById("state-error");
+      var elEmpty = document.getElementById("state-empty");
+      var elNoResult = document.getElementById("state-noresult");
+      var elNoNew = document.getElementById("state-nonew");
+
+      /* ---------- ジャンル別カバーの色と模様 ---------- */
+      var GENRES = ["スロット", "パズル", "クイズ", "アクション", "シューティング", "RPG・育成", "シミュレーション", "ボード・カード", "タイミング・反射", "デコ・おしゃれ", "学習・検定", "その他"];
+      var GENRE_STYLE = {
+        "アクション":     { c1: "#c65a3a", c2: "#9c3f27", pat: "pat-diag" },
+        "パズル":         { c1: "#5f9a72", c2: "#3f7352", pat: "pat-grid" },
+        "RPG":            { c1: "#7d6fa8", c2: "#574a80", pat: "pat-stars" },
+        "RPG・育成":      { c1: "#7d6fa8", c2: "#574a80", pat: "pat-stars" },
+        "ロールプレイング": { c1: "#7d6fa8", c2: "#574a80", pat: "pat-stars" },
+        "シミュレーション": { c1: "#5b87a0", c2: "#3d647c", pat: "pat-wave" },
+        "スロット":       { c1: "#c79a3f", c2: "#9a742a", pat: "pat-dots" },
+        "カジノ":         { c1: "#c79a3f", c2: "#9a742a", pat: "pat-dots" },
+        "クイズ":         { c1: "#4f9a92", c2: "#347068", pat: "pat-check" },
+        "学習・検定":     { c1: "#4f9a92", c2: "#347068", pat: "pat-check" },
+        "カード":         { c1: "#b06a8a", c2: "#834a64", pat: "pat-zig" },
+        "カードゲーム":   { c1: "#b06a8a", c2: "#834a64", pat: "pat-zig" },
+        "ボード・カード": { c1: "#b06a8a", c2: "#834a64", pat: "pat-zig" },
+        "ボードゲーム":   { c1: "#a98a52", c2: "#7d6234", pat: "pat-check" },
+        "レース":         { c1: "#5f7fa6", c2: "#425f85", pat: "pat-stripes" },
+        "タイミング・反射": { c1: "#5f7fa6", c2: "#425f85", pat: "pat-stripes" },
+        "アドベンチャー": { c1: "#6f9a5f", c2: "#4a7038", pat: "pat-wave" },
+        "シューティング": { c1: "#6d7a86", c2: "#48545f", pat: "pat-diag" },
+        "デコ・おしゃれ": { c1: "#b57f9e", c2: "#8a5a76", pat: "pat-dots" },
+        "音楽":           { c1: "#b57f9e", c2: "#8a5a76", pat: "pat-dots" },
+        "リズム":         { c1: "#b57f9e", c2: "#8a5a76", pat: "pat-dots" },
+        "その他":         { c1: "#8a7a9e", c2: "#63536f", pat: "pat-stars" }
+      };
+      var FALLBACK_STYLES = [
+        { c1: "#8a7a9e", c2: "#63536f", pat: "pat-stars" },
+        { c1: "#6d93a5", c2: "#4a6f82", pat: "pat-stripes" },
+        { c1: "#b9855c", c2: "#855c39", pat: "pat-zig" },
+        { c1: "#7d9a62", c2: "#55703c", pat: "pat-grid" },
+        { c1: "#bfa05e", c2: "#7d6234", pat: "pat-dots" }
+      ];
+      function genreStyle(genre) {
+        var g = (genre || "").trim();
+        if (GENRE_STYLE[g]) return GENRE_STYLE[g];
+        var h = 0;
+        for (var i = 0; i < g.length; i++) h = (h * 31 + g.charCodeAt(i)) >>> 0;
+        return FALLBACK_STYLES[h % FALLBACK_STYLES.length];
+      }
+
+      function esc(s) {
+        return String(s == null ? "" : s)
+          .replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+      }
+      function fmtDate(iso) {
+        var d = new Date(iso);
+        if (isNaN(d.getTime())) return "";
+        return d.getFullYear() + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + String(d.getDate()).padStart(2, "0");
+      }
+      /* 新着判定：登録日時（created_at）から7日以内だけを新着とする */
+      var NEW_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
+      function isNewGame(g) {
+        var t = new Date(g && g.created_at).getTime();
+        if (isNaN(t)) return false;
+        return t >= Date.now() - NEW_WINDOW_MS;
+      }
+      /* ---------- パッケージ描画 ---------- */
+      function packageHTML(g) {
+        var genre = (g.genre || "その他").trim() || "その他";
+        var author = (g.author_name || "ななし").trim() || "ななし";
+        var makerUrl = (g.maker_url || "").trim();
+        var makerLinked = /^https:\/\//i.test(makerUrl);
+        var authorBand = makerLinked
+          ? '<a href="' + esc(makerUrl) + '" target="_blank" rel="noopener">' + esc(author) + '</a>'
+          : esc(author);
+        var authorInfo = makerLinked
+          ? '<a href="' + esc(makerUrl) + '" target="_blank" rel="noopener"><b>' + esc(author) + '</b></a>'
+          : '<b>' + esc(author) + '</b>';
+        var cover;
+        if (g.thumbnail_url) {
+          // 画像の下地に自動カバーを敷き、画像が読めなかったら自動カバーが見える
+          var st0 = genreStyle(genre);
+          cover = '<div class="cover"><div class="gen-cover" style="background:linear-gradient(160deg,' + st0.c1 + ',' + st0.c2 + ')"><div class="' + st0.pat + '" style="position:absolute;inset:0"></div><div class="gtitle" style="position:relative">' + esc(g.title) + '</div><div class="ggenre" style="position:relative">' + esc(genre) + '</div></div><img src="' + esc(g.thumbnail_url) + '" alt="' + esc(g.title) + ' のサムネイル" loading="lazy" style="position:absolute;inset:0" onerror="this.remove()" /></div>';
+        } else {
+          var st = genreStyle(genre);
+          cover = '<div class="cover"><div class="gen-cover" style="background:linear-gradient(160deg,' + st.c1 + ',' + st.c2 + ')"><div class="' + st.pat + '" style="position:absolute;inset:0"></div><div class="gtitle" style="position:relative">' + esc(g.title) + '</div><div class="ggenre" style="position:relative">' + esc(genre) + '</div></div></div>';
+        }
+        var thumbAttr = g.thumbnail_url ? "" : ' data-thumb-for="' + esc(g.url || "") + '"';
+        var gid = esc(g.id == null ? "" : String(g.id));
+        var clickCount = parseInt(g.clicks, 10);
+        if (isNaN(clickCount) || clickCount < 0) clickCount = 0;
+        var isAdmin = false;
+        try { isAdmin = !!getStoredAdminKey(); } catch (e) { isAdmin = false; }
+        var delBtn = isAdmin
+          ? '<button type="button" class="del-btn" data-pkg-del="' + gid + '" aria-label="' + esc(g.title) + ' を削除">'
+            + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16"/><path d="M9 7V5a1.5 1.5 0 0 1 1.5-1.5h3A1.5 1.5 0 0 1 15 5v2"/><path d="M6.5 7l1 12a1.5 1.5 0 0 0 1.5 1.4h6A1.5 1.5 0 0 0 16.5 19l1-12"/><path d="M10 11v5M14 11v5"/></svg>'
+            + '削除</button>'
+          : '';
+        return '<article class="pkg">'
+          + '<div class="box" data-game-box="' + gid + '"' + thumbAttr + '>' + cover
+          + '<div class="band"><small>MAKER</small>' + authorBand + '</div>'
+          + '</div>'
+          + '<div class="pkg-info">'
+          + '<div class="pkg-title">' + esc(g.title) + '</div>'
+          + '<div class="pkg-meta"><span class="pkg-date">' + fmtDate(g.created_at) + ' 入荷</span><span class="pkg-clicks">利用 <span data-click-num="' + gid + '">' + clickCount + '</span>回</span></div>'
+          + '<div class="pkg-maker"><span class="pkg-maker-text">メーカー：' + authorInfo + ' ／ ' + esc(genre) + '</span>' + delBtn + '</div>'
+          + '<a class="play" data-game-open="' + gid + '" href="' + esc(g.url) + '" target="_blank" rel="noopener noreferrer">▶ 遊ぶ</a>'
+          + '</div></article>';
+      }
+
+      /* ---------- サムネ未登録ゲームの表示側サムネ補完（Microlink） ---------- */
+      function applyThumbToBox(box, imgUrl, title) {
+        if (!box || !imgUrl) return;
+        var cover = box.querySelector(".cover");
+        if (!cover || cover.querySelector("img")) return;
+        var img = document.createElement("img");
+        img.src = imgUrl;
+        img.alt = (title || "") + " のサムネイル";
+        img.loading = "lazy";
+        img.style.position = "absolute";
+        img.style.inset = "0";
+        img.addEventListener("error", function () { img.remove(); });
+        cover.appendChild(img);
+      }
+      function hydrateThumbnails() {
+        var boxes = shelvesEl.querySelectorAll("[data-thumb-for]");
+        Array.prototype.forEach.call(boxes, function (box) {
+          var gameUrl = box.getAttribute("data-thumb-for") || "";
+          if (!gameUrl || !/^https:\/\//i.test(gameUrl)) return;
+          if (thumbCache[gameUrl]) {
+            applyThumbToBox(box, thumbCache[gameUrl], "");
+            return;
+          }
+          if (thumbAttempted[gameUrl]) return;
+          thumbAttempted[gameUrl] = 1;
+          fetch("https://api.microlink.io/?url=" + encodeURIComponent(gameUrl))
+            .then(function (res) { if (!res.ok) throw new Error("HTTP " + res.status); return res.json(); })
+            .then(function (json) {
+              var imgUrl = json && json.data && json.data.image && json.data.image.url ? String(json.data.image.url).trim() : "";
+              if (!imgUrl || !/^https:\/\//i.test(imgUrl)) return;
+              thumbCache[gameUrl] = imgUrl;
+              Array.prototype.forEach.call(shelvesEl.querySelectorAll("[data-thumb-for]"), function (b) {
+                if ((b.getAttribute("data-thumb-for") || "") === gameUrl) applyThumbToBox(b, imgUrl, "");
+              });
+            })
+            .catch(function () { /* 取れない場合は自動パッケージ絵のまま */ });
+        });
+      }
+
+      function shelfHTML(label, list) {
+        var items = list.map(function (g) { return packageHTML(g); }).join("");
+        return '<section class="shelf"><span class="shelf-label">' + esc(label) + '<span class="count">' + list.length + '本</span></span>'
+          + '<div class="shelf-body" data-count="' + list.length + '"><div class="grid">' + items + '</div><div class="shelf-board"></div></div></section>';
+      }
+
+      function filteredGames() {
+        var q = query.trim().toLowerCase();
+        return games.filter(function (g) {
+          if (makerFilter && (g.author_name || "") !== makerFilter) return false;
+          if (!q) return true;
+          var hay = ((g.title || "") + " " + (g.description || "") + " " + (g.author_name || "") + " " + (g.genre || "")).toLowerCase();
+          return hay.indexOf(q) !== -1;
+        });
+      }
+
+      function render() {
+        var list = filteredGames();
+        // 新着の棚は登録から7日以内のゲームだけ（ジャンル別・メーカー別は全件のまま）
+        var newList = view === "new" ? list.filter(isNewGame) : list;
+        var showEmpty = games.length === 0;
+        var showNoResult = !showEmpty && list.length === 0;
+        var showNoNew = !showEmpty && !showNoResult && view === "new" && newList.length === 0;
+        elEmpty.classList.toggle("hidden", !showEmpty);
+        elNoResult.classList.toggle("hidden", !showNoResult);
+        elNoNew.classList.toggle("hidden", !showNoNew);
+        // 登録フォームはページ最下部に固定で1か所だけ（棚の切り替えでは隠さない）
+        var html = "";
+        if (view === "new") {
+          if (newList.length > 0) {
+            html = shelfHTML("新着コーナー", newList);
+          }
+        } else if (list.length > 0) {
+          if (view === "maker") {
+            html = groupShelves(list, function (g) { return (g.author_name || "ななし").trim() || "ななし"; }, "");
+          } else {
+            html = groupShelves(list, function (g) { return (g.genre || "その他").trim() || "その他"; }, "");
+          }
+        }
+        shelvesEl.innerHTML = html;
+        buildMakerChips();
+        hydrateThumbnails();
+      }
+
+      function groupShelves(list, keyFn, suffix) {
+        var order = [], map = {};
+        list.forEach(function (g) {
+          var k = keyFn(g);
+          if (!map[k]) { map[k] = []; order.push(k); }
+          map[k].push(g);
+        });
+        return order.map(function (k) { return shelfHTML(k + suffix, map[k]); }).join("");
+      }
+
+      function buildMakerChips() {
+        var makers = [], seen = {};
+        games.forEach(function (g) {
+          var a = (g.author_name || "").trim();
+          if (a && !seen[a]) { seen[a] = 1; makers.push(a); }
+        });
+        var wrap = document.getElementById("makerchips");
+        if (makers.length <= 1) { wrap.innerHTML = ""; return; }
+        var html = '<span class="lbl">メーカーで絞る：</span>';
+        html += '<button type="button" class="chip" data-maker="" aria-pressed="' + (makerFilter === "") + '">ぜんぶ</button>';
+        makers.forEach(function (m) {
+          html += '<button type="button" class="chip" data-maker="' + esc(m) + '" aria-pressed="' + (makerFilter === m) + '">' + esc(m) + '</button>';
+        });
+        wrap.innerHTML = html;
+        Array.prototype.forEach.call(wrap.querySelectorAll(".chip"), function (btn) {
+          btn.addEventListener("click", function () {
+            makerFilter = btn.getAttribute("data-maker") || "";
+            render();
+          });
+        });
+      }
+
+      /* ---------- 削除（管理者だけ実行できる） ---------- */
+      var ADMIN_KEY_NAME = "gamecorner_admin_key";
+      var DELETE_RPC = SUPABASE_URL + "/rest/v1/rpc/delete_game_admin";
+      var CLICK_RPC = SUPABASE_URL + "/rest/v1/rpc/increment_game_click";
+      var INSTA_URL = "https://www.instagram.com/sugimasa_insta/";
+      var delModal = document.getElementById("del-modal");
+      var delModalCard = document.getElementById("del-modal-card");
+      var pendingGame = null;      // 削除対象 {id, title}
+      var pendingGames = [];
+      var pendingKey = "";         // 削除に使うキー
+      var pendingIsNewKey = false; // 今回入力されたキーかどうか
+
+      function getStoredAdminKey() {
+        try { return window.localStorage.getItem(ADMIN_KEY_NAME) || ""; } catch (e) { return ""; }
+      }
+      function saveAdminKey(k) {
+        try { window.localStorage.setItem(ADMIN_KEY_NAME, k); } catch (e) {}
+      }
+      function clearAdminKey() {
+        try { window.localStorage.removeItem(ADMIN_KEY_NAME); } catch (e) {}
+      }
+      function findGameById(id) {
+        for (var i = 0; i < games.length; i++) {
+          if (String(games[i].id) === String(id)) return games[i];
+        }
+        return null;
+      }
+      function openDelModal(html) {
+        delModalCard.innerHTML = html;
+        delModal.classList.remove("hidden");
+        var f = delModalCard.querySelector("input, button, a");
+        if (f) { try { f.focus(); } catch (e) {} }
+      }
+      function closeDelModal() {
+        delModal.classList.add("hidden");
+        delModalCard.innerHTML = "";
+        pendingGame = null; pendingGames = []; pendingKey = ""; pendingIsNewKey = false;
+      }
+      function instaBtnHTML() {
+        return '<a class="modal-btn modal-btn--insta" href="' + INSTA_URL + '" target="_blank" rel="noopener">すぎもとのInstagramへ（@sugimasa_insta）</a>';
+      }
+      function closeBtnHTML() {
+        return '<button type="button" class="modal-btn" data-del-close>閉じる</button>';
+      }
+
+      // 案内モーダル（普通の訪問者向け／キー違い・エラー時もここに案内を出す）
+      function showContactModal(game, msg, msgKind) {
+        pendingGame = game;
+        var msgHTML = msg ? '<div class="modal-msg is-' + (msgKind === "ok" ? "ok" : "err") + '">' + esc(msg) + '</div>' : "";
+        openDelModal(
+          '<h2 id="del-modal-title">削除について</h2>'
+          + '<p><span class="modal-game">「' + esc(game.title) + '」</span>を削除したい場合は、開発者（すぎもと）に問い合わせてください。</p>'
+          + '<p class="sub">このボタンからは削除できません。お手数ですが、InstagramのDMなどでご連絡ください。</p>'
+          + msgHTML
+          + '<div class="modal-actions">' + instaBtnHTML() + closeBtnHTML() + '</div>'
+          + '<div class="modal-admin-link"><button type="button" id="del-admin-link">管理者の方はこちら</button></div>'
+        );
+        document.getElementById("del-admin-link").addEventListener("click", function () { showAdminKeyModal(game); });
+      }
+
+      // 管理者キー入力モーダル
+      function showAdminKeyModal(game, errMsg) {
+        pendingGame = game;
+        var errHTML = errMsg ? '<div class="modal-msg is-err">' + esc(errMsg) + '</div>' : "";
+        openDelModal(
+          '<h2 id="del-modal-title">管理者キー</h2>'
+          + '<p class="sub">管理者キーを入力してください。正しいキーを入れると、このブラウザに保存されて、そのまま削除の確認へ進みます。</p>'
+          + '<div class="modal-key-field"><label for="del-key-input">管理者キー</label>'
+          + '<input id="del-key-input" type="password" autocomplete="off" /></div>'
+          + errHTML
+          + '<div class="modal-actions">'
+          + '<button type="button" class="modal-btn modal-btn--danger" id="del-key-next">確認して削除へ進む</button>'
+          + '<button type="button" class="modal-btn" id="del-key-back">案内に戻る</button>'
+          + '</div>'
+        );
+        var input = document.getElementById("del-key-input");
+        function next() {
+          var k = (input.value || "").trim();
+          if (!k) { showAdminKeyModal(game, "キーを入力してください。"); return; }
+          showConfirmModal(game, k, true);
+        }
+        document.getElementById("del-key-next").addEventListener("click", next);
+        input.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); next(); } });
+        document.getElementById("del-key-back").addEventListener("click", function () { showContactModal(game); });
+      }
+
+      // 削除の確認モーダル
+      function showConfirmModal(game, key, isNewKey) {
+        pendingGame = game; pendingKey = key; pendingIsNewKey = !!isNewKey;
+        openDelModal(
+          '<h2 id="del-modal-title">本当に削除しますか？</h2>'
+          + '<p><span class="modal-game">「' + esc(game.title) + '」</span>を棚から削除します。</p>'
+          + '<p class="sub">この操作は元に戻せません。</p>'
+          + '<div class="modal-msg" id="del-confirm-msg"></div>'
+          + '<div class="modal-actions">'
+          + '<button type="button" class="modal-btn modal-btn--danger" id="del-confirm-yes">削除する</button>'
+          + '<button type="button" class="modal-btn" data-del-close>キャンセル</button>'
+          + '</div>'
+        );
+        document.getElementById("del-confirm-yes").addEventListener("click", performDelete);
+      }
+
+      // 削除実行（Supabase RPC delete_game_admin）
+      function performDelete() {
+        if (!pendingGame) return;
+        var game = pendingGame;
+        var key = pendingKey;
+        var isNewKey = pendingIsNewKey;
+        var yesBtn = document.getElementById("del-confirm-yes");
+        var msgEl = document.getElementById("del-confirm-msg");
+        if (yesBtn) { yesBtn.disabled = true; yesBtn.textContent = "削除しています…"; }
+        fetch(DELETE_RPC, {
+          method: "POST",
+          headers: {
+            "apikey": API_KEY,
+            "Authorization": "Bearer " + API_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ p_id: game.id, p_key: key })
+        }).then(function (res) {
+          return res.json().then(function (body) {
+            if (!res.ok) {
+              var m = (body && (body.message || body.details || body.hint)) || ("HTTP " + res.status);
+              throw new Error(m);
+            }
+            return body;
+          }).catch(function (e) {
+            if (!res.ok) throw e;
+            return null; // 本文が読めない場合は結果不明として扱う
+          });
+        }).then(function (result) {
+          if (result === true) {
+            if (isNewKey) saveAdminKey(key);
+            games = games.filter(function (g) { return String(g.id) !== String(game.id); });
+            render();
+            if (typeof updateDelAdminStatus === "function") updateDelAdminStatus();
+            openDelModal(
+              '<h2 id="del-modal-title">削除しました</h2>'
+              + '<p><span class="modal-game">「' + esc(game.title) + '」</span>を棚から削除しました。</p>'
+              + '<div class="modal-actions">' + closeBtnHTML() + '</div>'
+            );
+          } else if (result === false) {
+            clearAdminKey();
+            render();
+            if (typeof updateDelAdminStatus === "function") updateDelAdminStatus();
+            if (isNewKey) {
+              showAdminKeyModal(game, "キーが違います。入力を確認してください。削除したい場合は開発者（すぎもと）にお問い合わせください。");
+            } else {
+              showContactModal(game, "保存されていたキーが違うため削除できませんでした。保存キーは消去しました。");
+            }
+          } else {
+            showContactModal(game, "削除の結果を確認できませんでした。通信の状態を確認して、もう一度お試しください。");
+          }
+        }).catch(function (err) {
+          showContactModal(game, "削除できませんでした：" + (err && err.message ? err.message : "通信エラー"));
+        });
+      }
+
+      // 削除ボタンの入口：保存キーがあるかどうかで分岐
+      function handleDeleteClick(id) {
+        var g = findGameById(id);
+        if (!g) return;
+        var game = { id: g.id, title: (g.title || "（タイトルなし）") };
+        var stored = getStoredAdminKey();
+        if (stored) {
+          showConfirmModal(game, stored, false);
+        } else {
+          showContactModal(game);
+        }
+      }
+      /* ---------- 棚のパッケージの削除ボタン（管理者モードの時だけ packageHTML が出す） ---------- */
+      shelvesEl.addEventListener("click", function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest("[data-pkg-del]") : null;
+        if (!btn) return;
+        e.preventDefault();
+        handleDeleteClick(btn.getAttribute("data-pkg-del"));
+      });
+
+      /* ---------- クリック数の計測（ゲームを開くクリックだけ／メーカーのSNSリンクは数えない） ---------- */
+      function trackGameClick(id) {
+        if (id == null || id === "") return;
+        var g = findGameById(id);
+        var pid = g ? g.id : id;
+        if (g) {
+          var cur = parseInt(g.clicks, 10);
+          if (isNaN(cur) || cur < 0) cur = 0;
+          g.clicks = cur + 1;
+          Array.prototype.forEach.call(shelvesEl.querySelectorAll("[data-click-num]"), function (n) {
+            if (n.getAttribute("data-click-num") === String(pid)) n.textContent = String(g.clicks);
+          });
+        }
+        try {
+          fetch(CLICK_RPC, {
+            method: "POST",
+            headers: {
+              "apikey": API_KEY,
+              "Authorization": "Bearer " + API_KEY,
+              "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ p_id: pid }),
+            keepalive: true
+          }).catch(function () { /* 計測できなくてもゲームはそのまま開く */ });
+        } catch (e) { /* 同上 */ }
+      }
+      shelvesEl.addEventListener("click", function (e) {
+        if (!e.target || !e.target.closest) return;
+        if (e.target.closest("[data-pkg-del]")) return;
+        var openLink = e.target.closest("[data-game-open]");
+        if (openLink) {
+          // リンク（target=_blank）の遷移は止めず、並行して keepalive で計測する
+          trackGameClick(openLink.getAttribute("data-game-open"));
+          return;
+        }
+        var box = e.target.closest("[data-game-box]");
+        if (box) {
+          // パッケージ内のメーカーSNSリンクなど、リンク／ボタンのクリックはゲームを開くクリックとして数えない
+          if (e.target.closest("a, button")) return;
+          var gid2 = box.getAttribute("data-game-box");
+          var gg = findGameById(gid2);
+          if (!gg || !gg.url || !/^https:\/\//i.test(gg.url)) return;
+          trackGameClick(gid2);
+          window.open(gg.url, "_blank", "noopener,noreferrer");
+        }
+      });
+
+      /* ---------- 削除枠内の管理者キー（保存状態の表示と入力フォーム） ---------- */
+      var delAdminStatusEl = document.getElementById("del-admin-status");
+      var delAdminFormEl = document.getElementById("del-admin-form");
+      var delSectionKeyInput = document.getElementById("del-section-key-input");
+      var delSectionKeyMsg = document.getElementById("del-section-key-msg");
+      function updateDelAdminStatus() {
+        if (!delAdminStatusEl) return;
+        delAdminStatusEl.textContent = getStoredAdminKey()
+          ? "管理者モード：ON（棚のパッケージに削除ボタンが表示されています）"
+          : "管理者モード：OFF（削除ボタンは表示されません）";
+      }
+      var delSectionAdminLink = document.getElementById("del-section-admin-link");
+      if (delSectionAdminLink && delAdminFormEl) {
+        delSectionAdminLink.addEventListener("click", function () {
+          delAdminFormEl.classList.toggle("hidden");
+          if (!delAdminFormEl.classList.contains("hidden") && delSectionKeyInput) {
+            try { delSectionKeyInput.focus(); } catch (e) {}
+          }
+        });
+      }
+      var delSectionKeyCancel = document.getElementById("del-section-key-cancel");
+      if (delSectionKeyCancel && delAdminFormEl) {
+        delSectionKeyCancel.addEventListener("click", function () { delAdminFormEl.classList.add("hidden"); });
+      }
+      var delSectionKeySave = document.getElementById("del-section-key-save");
+      function saveSectionKey() {
+        var k = delSectionKeyInput ? (delSectionKeyInput.value || "").trim() : "";
+        if (!delSectionKeyMsg) return;
+        if (!k) {
+          delSectionKeyMsg.className = "modal-msg is-err";
+          delSectionKeyMsg.textContent = "キーを入力してください。";
+          return;
+        }
+        saveAdminKey(k);
+        if (delSectionKeyInput) delSectionKeyInput.value = "";
+        delSectionKeyMsg.className = "modal-msg is-ok";
+        delSectionKeyMsg.textContent = "管理者キーを保存しました。管理者モードになり、棚のパッケージに削除ボタンが表示されます（キーが違う場合は削除のときに判定されて消去されます）。";
+        updateDelAdminStatus();
+        render();
+      }
+      if (delSectionKeySave) delSectionKeySave.addEventListener("click", saveSectionKey);
+      if (delSectionKeyInput) {
+        delSectionKeyInput.addEventListener("keydown", function (e) { if (e.key === "Enter") { e.preventDefault(); saveSectionKey(); } });
+      }
+      updateDelAdminStatus();
+      delModalCard.addEventListener("click", function (e) {
+        var c = e.target && e.target.closest ? e.target.closest("[data-del-close]") : null;
+        if (c) closeDelModal();
+      });
+      delModal.addEventListener("click", function (e) {
+        if (e.target === delModal) closeDelModal();
+      });
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape" && !delModal.classList.contains("hidden")) closeDelModal();
+      });
+
+      /* ---------- 読み込み ---------- */
+      function load() {
+        elLoading.classList.remove("hidden");
+        elError.classList.add("hidden");
+        shelvesEl.innerHTML = "";
+        fetch(ENDPOINT + "?select=" + SELECT + "&order=created_at.desc", {
+          headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
+        }).then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        }).then(function (data) {
+          games = Array.isArray(data) ? data : [];
+          elLoading.classList.add("hidden");
+          render();
+        }).catch(function () {
+          elLoading.classList.add("hidden");
+          elError.classList.remove("hidden");
+        });
+      }
+      document.getElementById("reload-btn").addEventListener("click", load);
+
+      /* ---------- 検索・表示切替 ---------- */
+      document.getElementById("search").addEventListener("input", function (e) {
+        query = e.target.value;
+        render();
+      });
+      Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function (btn) {
+        btn.addEventListener("click", function () {
+          view = btn.getAttribute("data-view");
+          Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function (b) {
+            b.setAttribute("aria-pressed", b === btn ? "true" : "false");
+          });
+          render();
+        });
+      });
+
+      /* ---------- 登録フォーム ---------- */
+      var form = document.getElementById("reg-form");
+      var fTitle = document.getElementById("f-title");
+      var fUrl = document.getElementById("f-url");
+      var fAuthor = document.getElementById("f-author");
+      var fMakerUrl = document.getElementById("f-maker-url");
+      var fGenre = document.getElementById("f-genre");
+      var autoThumbUrl = "";   // 抽出で取れたサムネURL（画面には出さず、登録時に thumbnail_url として送る）
+      var formErr = document.getElementById("form-err");
+      var formOk = document.getElementById("form-ok");
+      var submitBtn = document.getElementById("submit-btn");
+
+      /* ---------- ジャンルスライダー（スクロールスナップ式・初期値「その他」） ---------- */
+      var genreSlider = document.getElementById("genre-slider");
+      var genreItems = [];
+      var genreIndex = GENRES.indexOf("その他");
+      var genreRaf = 0;
+
+      function reducedMotionPref() {
+        return !!(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches);
+      }
+      function applyGenre(i) {
+        genreIndex = i;
+        fGenre.value = GENRES[i];
+        genreItems.forEach(function (it, j) {
+          var on = j === i;
+          it.classList.toggle("is-active", on);
+          it.setAttribute("aria-selected", on ? "true" : "false");
+        });
+        var nm = document.getElementById("genre-now-name");
+        if (nm) nm.textContent = GENRES[i];
+        var pos = document.getElementById("genre-now-pos");
+        if (pos) pos.textContent = "（" + (i + 1) + " / " + GENRES.length + "）";
+        var pv = document.getElementById("gs-prev");
+        var nx = document.getElementById("gs-next");
+        if (pv) pv.disabled = i <= 0;
+        if (nx) nx.disabled = i >= GENRES.length - 1;
+      }
+      function scrollToGenre(i, smooth) {
+        var it = genreItems[i];
+        if (!it || !genreSlider) return;
+        var tr = genreSlider.getBoundingClientRect();
+        var ir = it.getBoundingClientRect();
+        var target = genreSlider.scrollLeft + (ir.left + ir.width / 2) - (tr.left + tr.width / 2);
+        try {
+          genreSlider.scrollTo({ left: target, behavior: (smooth && !reducedMotionPref()) ? "smooth" : "auto" });
+        } catch (e) {
+          genreSlider.scrollLeft = target;
+        }
+        applyGenre(i);
+      }
+      function setGenre(v) {
+        var i = GENRES.indexOf(v);
+        if (i === -1) i = GENRES.indexOf("その他");
+        scrollToGenre(i, false);
+      }
+      function syncGenreFromScroll() {
+        if (!genreItems.length || !genreSlider) return;
+        var tr = genreSlider.getBoundingClientRect();
+        var cx = tr.left + tr.width / 2;
+        var best = genreIndex, bestD = Infinity;
+        genreItems.forEach(function (it, i) {
+          var r = it.getBoundingClientRect();
+          var d = Math.abs(r.left + r.width / 2 - cx);
+          if (d < bestD) { bestD = d; best = i; }
+        });
+        if (best !== genreIndex) applyGenre(best);
+      }
+      (function buildGenreSlider() {
+        if (!genreSlider) return;
+        genreSlider.innerHTML = GENRES.map(function (g) {
+          var st = genreStyle(g);
+          return '<div class="gs-item" role="option" aria-selected="false" data-genre="' + esc(g) + '" style="background:linear-gradient(160deg,' + st.c1 + ',' + st.c2 + ')"><div class="' + st.pat + '" style="position:absolute;inset:0" aria-hidden="true"></div><span style="position:relative">' + esc(g) + '</span></div>';
+        }).join("");
+        genreItems = Array.prototype.slice.call(genreSlider.querySelectorAll(".gs-item"));
+        genreItems.forEach(function (it, i) {
+          it.addEventListener("click", function () { scrollToGenre(i, true); });
+        });
+        genreSlider.addEventListener("scroll", function () {
+          if (genreRaf) return;
+          genreRaf = requestAnimationFrame(function () { genreRaf = 0; syncGenreFromScroll(); });
+        }, { passive: true });
+        genreSlider.addEventListener("keydown", function (e) {
+          if (e.key === "ArrowLeft") { e.preventDefault(); scrollToGenre(Math.max(0, genreIndex - 1), true); }
+          else if (e.key === "ArrowRight") { e.preventDefault(); scrollToGenre(Math.min(GENRES.length - 1, genreIndex + 1), true); }
+        });
+        document.getElementById("gs-prev").addEventListener("click", function () { scrollToGenre(Math.max(0, genreIndex - 1), true); });
+        document.getElementById("gs-next").addEventListener("click", function () { scrollToGenre(Math.min(GENRES.length - 1, genreIndex + 1), true); });
+        applyGenre(genreIndex);
+        requestAnimationFrame(function () { scrollToGenre(genreIndex, false); });
+        window.addEventListener("load", function () { scrollToGenre(genreIndex, false); });
+        window.addEventListener("resize", function () { scrollToGenre(genreIndex, false); });
+      })();
+
+      try {
+        var savedName = window.localStorage.getItem("gamecorner_author_name");
+        if (savedName) { fAuthor.value = savedName; updateCounts(); }
+      } catch (e) { /* 覚えられない環境ではそのまま */ }
+
+      function bindCount(input, counterId) {
+        var c = document.getElementById(counterId);
+        if (!c) return;
+        input.addEventListener("input", function () { c.textContent = input.value.length; });
+      }
+      function updateCounts() {
+        document.getElementById("c-title").textContent = fTitle.value.length;
+        document.getElementById("c-author").textContent = fAuthor.value.length;
+      }
+      bindCount(fTitle, "c-title");
+      bindCount(fAuthor, "c-author");
+
+      function showErr(msg) {
+        formErr.textContent = msg;
+        formErr.style.display = "block";
+        formOk.style.display = "none";
+      }
+      function showOk(msg) {
+        formOk.textContent = msg;
+        formOk.style.display = "block";
+        formErr.style.display = "none";
+      }
+      function isHttps(u) { return /^https:\/\/\S+$/i.test(u); }
+
+      /* ---------- タイトル自動抽出（Microlink） ---------- */
+      var fetchStatusEl = document.getElementById("fetch-status");
+      var lastFetchUrl = "";   // このURLはもう抽出を試した（自動では1回だけ）
+      var fetchSeq = 0;        // 古いリクエストの結果を捨てるための番号
+
+      function setFetchStatus(kind, msg) {
+        if (!fetchStatusEl) return;
+        if (!kind) {
+          fetchStatusEl.className = "fetch-status";
+          fetchStatusEl.textContent = "";
+          return;
+        }
+        fetchStatusEl.className = "fetch-status is-" + kind;
+        fetchStatusEl.textContent = msg;
+      }
+
+      function tryFetchMeta() {
+        var url = fUrl.value.trim();
+        if (!isHttps(url)) return;
+        if (url === lastFetchUrl) return; // 同じURLでは自動で1回だけ
+        lastFetchUrl = url;
+        var seq = ++fetchSeq;
+        setFetchStatus("loading", "タイトルを取得中…");
+
+        var controller = null;
+        var timer = null;
+        var fetchOpts = {};
+        if (typeof AbortController !== "undefined") {
+          controller = new AbortController();
+          fetchOpts.signal = controller.signal;
+          timer = setTimeout(function () { try { controller.abort(); } catch (e) {} }, 12000);
+        }
+
+        fetch("https://api.microlink.io/?url=" + encodeURIComponent(url), fetchOpts)
+          .then(function (res) {
+            if (!res.ok) throw new Error("HTTP " + res.status);
+            return res.json();
+          })
+          .then(function (json) {
+            if (timer) clearTimeout(timer);
+            if (seq !== fetchSeq) return; // 途中で別のURLになった結果は捨てる
+            if (fUrl.value.trim() !== url) return;
+            var data = (json && json.data) || {};
+            var title = (data.title == null ? "" : String(data.title)).trim();
+            if (!title) {
+              setFetchStatus("fail", "自動で取れませんでした。タイトルを手で入れてください");
+              return;
+            }
+            fTitle.value = title.slice(0, 80);
+            // サムネ：httpsで取れたら内部に保持し、登録時に thumbnail_url として送る
+            var imgUrl = data.image && data.image.url ? String(data.image.url).trim() : "";
+            if (imgUrl && isHttps(imgUrl) && !autoThumbUrl) {
+              autoThumbUrl = imgUrl;
+            }
+            updateCounts();
+            setFetchStatus("ok", "タイトルを自動で入れました（直せます）");
+          })
+          .catch(function () {
+            if (timer) clearTimeout(timer);
+            if (seq !== fetchSeq) return;
+            if (fUrl.value.trim() !== url) return;
+            setFetchStatus("fail", "自動で取れませんでした。タイトルを手で入れてください");
+          });
+      }
+
+      // 貼り付けた時と、入力欄から離れた時に自動で取りに行く
+      fUrl.addEventListener("paste", function () {
+        setTimeout(tryFetchMeta, 0);
+      });
+      fUrl.addEventListener("blur", tryFetchMeta);
+      fUrl.addEventListener("input", function () {
+        var v = fUrl.value.trim();
+        if (!v) { lastFetchUrl = ""; autoThumbUrl = ""; setFetchStatus("", ""); }
+        else if (v !== lastFetchUrl) { autoThumbUrl = ""; setFetchStatus("", ""); }
+      });
+
+      form.addEventListener("submit", function (ev) {
+        ev.preventDefault();
+        var title = fTitle.value.trim();
+        var url = fUrl.value.trim();
+        var author = fAuthor.value.trim();
+        var makerUrl = fMakerUrl.value.trim();
+        var genre = fGenre.value.trim() || "その他";
+        var thumb = autoThumbUrl;
+
+        if (!title) return showErr("タイトルを入れてください。");
+        if (title.length > 80) return showErr("タイトルは80字までです。");
+        if (!url) return showErr("ゲームのURLを入れてください。");
+        if (!isHttps(url)) return showErr("ゲームのURLは https:// で始まるものだけ貼れます。");
+        if (!author) return showErr("メーカー名（作った人の名前）を入れてください。");
+        if (author.length > 40) return showErr("メーカー名は40字までです。");
+        if (makerUrl && !isHttps(makerUrl)) return showErr("メーカーのSNSリンクは https:// で始まるURLだけ使えます。");
+        if (thumb && !isHttps(thumb)) return showErr("サムネ画像のURLは https:// で始まるものだけ使えます。");
+
+        var payload = {
+          title: title,
+          url: url,
+          description: "",
+          author_name: author,
+          genre: genre,
+          thumbnail_url: thumb
+        };
+        if (makerUrl) payload.maker_url = makerUrl;
+
+        submitBtn.disabled = true;
+        submitBtn.textContent = "棚に並べています…";
+        fetch(ENDPOINT, {
+          method: "POST",
+          headers: {
+            "apikey": API_KEY,
+            "Authorization": "Bearer " + API_KEY,
+            "Content-Type": "application/json",
+            "Prefer": "return=representation"
+          },
+          body: JSON.stringify(payload)
+        }).then(function (res) {
+          return res.json().then(function (body) {
+            if (!res.ok) {
+              var msg = (body && (body.message || body.details || body.hint)) || ("HTTP " + res.status);
+              throw new Error(msg);
+            }
+            return body;
+          });
+        }).then(function (body) {
+          var row = Array.isArray(body) ? body[0] : body;
+          try { window.localStorage.setItem("gamecorner_author_name", author); } catch (e) {}
+          if (row && row.id != null) {
+            games.unshift(row);
+          } else {
+            return load();
+          }
+          makerFilter = ""; query = ""; document.getElementById("search").value = "";
+          view = "new";
+          Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-view") === "new" ? "true" : "false");
+          });
+          render();
+          showOk("「" + title + "」を棚に並べました！新着コーナーの先頭に出ています。");
+          fTitle.value = ""; fUrl.value = ""; autoThumbUrl = ""; setGenre("その他");
+          lastFetchUrl = ""; fetchSeq++; setFetchStatus("", "");
+          updateCounts();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }).catch(function (err) {
+          showErr("登録できませんでした：" + (err && err.message ? err.message : "通信エラー"));
+        }).then(function () {
+          submitBtn.disabled = false;
+          submitBtn.textContent = "棚に並べる";
+        });
+      });
+
+      /* ---------- 読み込みスピナーのアニメーション（rAFでDOMへ直接書く） ---------- */
+      var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      if (!reduceMotion) {
+        var spin = document.getElementById("spinner");
+        var start = null;
+        function tick(ts) {
+          if (start === null) start = ts;
+          var t = ts - start;
+          if (spin && !elLoading.classList.contains("hidden")) {
+            spin.style.transform = "rotate(" + (t % 900) * 0.4 + "deg)";
+          }
+          requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+      }
+
+      load();
+    </script>
+  </body>
+</html>
