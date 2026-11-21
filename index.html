@@ -153,9 +153,17 @@
         padding: 6px 4px; cursor: pointer; min-height: 2.35rem;
       }
       .seg button[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); }
-      .makerchips { display: flex; flex-wrap: wrap; gap: 6px; }
+      .makerchips {
+        display: flex; flex-wrap: nowrap; gap: 6px; align-items: center;
+        overflow-x: auto; overflow-y: hidden;
+        min-width: 0; max-width: 100%;
+        padding: 2px 1px;
+        scrollbar-width: none; -webkit-overflow-scrolling: touch;
+      }
+      .makerchips::-webkit-scrollbar { display: none; }
       .makerchips:empty { display: none; }
-      .makerchips .lbl { font-weight: 800; font-size: 14.5px; color: var(--ink-soft); align-self: center; }
+      .makerchips .lbl { flex: 0 0 auto; white-space: nowrap; font-weight: 800; font-size: 14.5px; color: var(--ink-soft); align-self: center; }
+      .makerchips .chip { flex: 0 0 auto; white-space: nowrap; }
       /* ---------- ジャンルスライダー ---------- */
       .genre-slider-wrap { display: flex; align-items: center; gap: 6px; min-width: 0; max-width: 100%; }
       .genre-slider {
@@ -200,6 +208,68 @@
         border-radius: 999px; padding: 6px 14px; cursor: pointer; min-height: 2.25rem;
       }
       .chip[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); border-color: var(--chip-on); }
+
+      /* ---------- 並べ替え ---------- */
+      .sortrow { display: flex; align-items: center; gap: 8px; }
+      .sortrow label { flex: 0 0 auto; font-weight: 800; font-size: 14.5px; color: var(--ink-soft); white-space: nowrap; }
+      .sortrow select {
+        flex: 1 1 auto; min-width: 0; font: inherit; font-size: 15.5px; font-weight: 700;
+        color: var(--ink); background: var(--field-bg);
+        border: 2px solid var(--field-line); border-radius: 999px; padding: 7px 12px; min-height: 2.35rem;
+      }
+
+      /* ---------- ランキング ---------- */
+      .rank-sec {
+        background: linear-gradient(180deg, #fffdf6, #fff8ea 60%, #fdf0d7);
+        border: 2px solid var(--card-line); border-radius: 12px;
+        padding: 14px; box-shadow: var(--shadow);
+      }
+      .rank-tabs { display: flex; gap: 4px; background: var(--card); border: 2px solid var(--card-line); border-radius: 999px; padding: 3px; }
+      .rank-tabs button {
+        flex: 1; font: inherit; font-weight: 800; font-size: 15.5px;
+        border: 0; border-radius: 999px; background: transparent; color: var(--ink-soft);
+        padding: 6px 4px; cursor: pointer; min-height: 2.35rem;
+      }
+      .rank-tabs button[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); }
+      .rank-title-head {
+        margin: 12px 0 10px; text-align: center; line-height: 1.35;
+        font-family: "Yusei Magic", "M PLUS Rounded 1c", sans-serif; font-weight: 400; font-size: 22px; color: var(--ink);
+      }
+      .rank-list { display: grid; gap: 8px; }
+      .rank-row {
+        display: flex; align-items: center; gap: 12px;
+        background: var(--card); border: 2px solid var(--card-line); border-radius: 12px;
+        padding: 8px 12px; text-decoration: none; color: var(--ink);
+        box-shadow: 0 2px 6px rgba(122, 74, 20, .1);
+      }
+      .rank-row:active { background: #fdf3da; }
+      .rank-badge {
+        flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 800; font-size: 17px; line-height: 1;
+        background: #f3e7cb; color: var(--ink-soft); border: 2px solid var(--card-line);
+      }
+      .rank-badge.r1 { background: linear-gradient(180deg, #ffec8f, #f2c230); color: #6d4a00; border-color: #bd8f1e; box-shadow: 0 0 8px rgba(242, 194, 48, .55); }
+      .rank-badge.r2 { background: linear-gradient(180deg, #f4f4f6, #c6cad1); color: #4c5058; border-color: #9aa1ab; }
+      .rank-badge.r3 { background: linear-gradient(180deg, #f2b183, #cd7a3e); color: #5d2f0c; border-color: #a85c26; }
+      .rank-thumb {
+        flex: 0 0 auto; width: 50px; aspect-ratio: 3 / 4; position: relative;
+        border-radius: 4px 6px 6px 4px; overflow: hidden;
+        box-shadow: 0 2px 5px rgba(122, 74, 20, .25), inset 0 0 0 1px rgba(0,0,0,.18);
+        background: #888;
+      }
+      .rank-thumb .gen-cover { padding: 4px 3px; }
+      .rank-thumb .gen-cover .gtitle { font-size: 9.5px; -webkit-line-clamp: 4; }
+      .rank-thumb .gen-cover .ggenre { display: none; }
+      .rank-info { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+      .rank-gtitle { font-weight: 800; font-size: 16.5px; line-height: 1.35; overflow-wrap: anywhere; }
+      .rank-maker { font-size: 13.5px; font-weight: 700; color: var(--ink-soft); overflow-wrap: anywhere; }
+      .rank-count { flex: 0 0 auto; font-weight: 800; font-size: 15.5px; white-space: nowrap; color: var(--ink); }
+      .rank-msg {
+        text-align: center; background: var(--card);
+        border: 2px dashed var(--card-line); border-radius: 12px; padding: 16px 12px;
+        font-weight: 700; color: var(--ink-soft); line-height: 1.6;
+      }
 
       /* ---------- 棚 ---------- */
       #shelves { display: grid; gap: 12px; margin-top: 10px; }
@@ -411,6 +481,15 @@
       }
       .state .big { font-size: 19px; font-weight: 800; }
       .state p { color: var(--ink-soft); margin: 6px 0 0; }
+      .snapshot-note {
+        margin-top: 10px; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 8px 12px;
+        background: rgba(255, 217, 104, .28); border: 2px dashed #b98d4f; border-radius: 12px;
+        padding: 9px 12px; font-size: 14px; font-weight: 700; color: var(--ink); text-align: center; line-height: 1.55;
+      }
+      .snapshot-note button {
+        font: inherit; font-size: 14px; font-weight: 800; cursor: pointer;
+        background: #33241a; color: #ffe08a; border: 0; border-radius: 999px; padding: 6px 18px; min-height: 2.2rem;
+      }
       .reload-btn {
         margin-top: 14px; font: inherit; font-weight: 800; font-size: 16px; cursor: pointer;
         background: #33241a; color: #ffe08a; border: 0; border-radius: 999px; padding: 10px 26px;
@@ -504,8 +583,22 @@
           <button type="button" data-view="new" aria-pressed="true">新着の棚</button>
           <button type="button" data-view="genre" aria-pressed="false">ジャンル別</button>
           <button type="button" data-view="maker" aria-pressed="false">メーカー別</button>
+          <button type="button" data-view="ranking" aria-pressed="false">ランキング</button>
+        </div>
+        <div class="sortrow" id="sort-row">
+          <label for="sort-select">並べ替え</label>
+          <select id="sort-select" aria-label="棚の並べ替え">
+            <option value="recommend">おすすめ順（いままでの並び）</option>
+            <option value="popular">人気順（利用回数が多い順）</option>
+            <option value="newest">新着順（登録が新しい順）</option>
+          </select>
         </div>
         <div class="makerchips" id="makerchips" aria-label="メーカーで絞り込み"></div>
+      </div>
+
+      <div class="snapshot-note hidden" id="state-snapshot" role="status">
+        <span>いまは通信が取れないため、保存しておいた棚の写しを表示しています（2026年11月21日時点）。利用回数などは古いことがあります。</span>
+        <button type="button" id="reload-btn2">最新の棚を読み込む</button>
       </div>
 
       <main id="shelves" aria-live="polite"></main>
@@ -625,10 +718,28 @@
       var ENDPOINT = SUPABASE_URL + "/rest/v1/games";
       var SELECT = "id,title,url,description,author_name,maker_url,genre,thumbnail_url,created_at,clicks";
 
+      /* 棚の写し（2026-11-21時点の実データ）：アプリ内表示などで通信が取れない時も、
+         まずこの写しで棚を見せ、通信が取れたら自動で最新データに差し替える */
+      var FALLBACK_GAMES = [
+        { "id": 10, "title": "🐱ゆず君のアイテム集め", "url": "https://muse.ai/s/yuzunoaitemuji-megemu-is6xu8z1xssxew/jmck4Pf8luSaPVJYGsr8N3avQF_JPsRwh2CmwnTBK8Q", "description": "", "author_name": "さち", "maker_url": "", "genre": "アクション", "thumbnail_url": "https://muse.ai/s/yuzunoaitemuji-megemu-is6xu8z1xssxew/preview-image?share_key=jmck4Pf8luSaPVJYGsr8N3avQF_JPsRwh2CmwnTBK8Q", "created_at": "2026-11-20T10:06:24.765688+00:00", "clicks": 2 },
+        { "id": 9, "title": "半額の男", "url": "https://x.gd/vcEH2", "description": "", "author_name": "とみー", "maker_url": "https://www.instagram.com/tommyzawaofficial", "genre": "タイミング・反射", "thumbnail_url": "https://muse.ai/s/ban-e-nootoko-xrxc6hswxdzrx0xr/preview-image?share_key=aqbNOwVb9qhx_SIYTTcMdAaPY_jAnyMZtrYsVULMph8", "created_at": "2026-11-20T06:27:16.863903+00:00", "clicks": 2 },
+        { "id": 8, "title": "絲です(ITODESU)", "url": "https://x.gd/PSToS", "description": "", "author_name": "とみー", "maker_url": "https://www.instagram.com/tommyzawaofficial", "genre": "パズル", "thumbnail_url": "https://muse.ai/s/si-desu-itodesu-xjxy6hst5oxnsxp/preview-image?share_key=p4mu4LSq04wLBAzc0C6ux8qU2SiepfrgLw_GaP7fGog", "created_at": "2026-11-20T06:25:49.851075+00:00", "clicks": 2 },
+        { "id": 7, "title": "くまもとキャッシュフローゲーム", "url": "https://muse.ai/s/kiyatusiyuhurogemu-ixk6yrdxzxebhu/0Bs5JvYQI5H4xRnRbqgXnhlNds8Ke1J55g7foOnqccQ", "description": "", "author_name": "すぎもと", "maker_url": "https://www.instagram.com/sugimasa_insta/", "genre": "シミュレーション", "thumbnail_url": "https://muse.ai/s/kiyatusiyuhurogemu-ixk6yrdxzxebhu/preview-image?share_key=0Bs5JvYQI5H4xRnRbqgXnhlNds8Ke1J55g7foOnqccQ", "created_at": "2026-11-20T01:45:52.766827+00:00", "clicks": 1 },
+        { "id": 5, "title": "3D的当てシューティング", "url": "https://muse.ai/s/3dde-dang-tesiyuteingu-xtxp6ylxqduxurn/lcAxheoe6dw2k3MBkDGXeCtWyZ7os-6NzPWhAb7nzwg", "description": "", "author_name": "すぎもと", "maker_url": "https://www.instagram.com/sugimasa_insta/", "genre": "シューティング", "thumbnail_url": "https://muse.ai/s/3dde-dang-tesiyuteingu-xtxp6ylxqduxurn/preview-image?share_key=lcAxheoe6dw2k3MBkDGXeCtWyZ7os-6NzPWhAb7nzwg", "created_at": "2026-11-19T21:03:56.138073+00:00", "clicks": 3 },
+        { "id": 4, "title": "ドーナツ揚げゲーム", "url": "https://muse.ai/s/donatuyang-gegemu-xew6ylxqb13xlxa/UoQD449WhUTHJuAtF_kjgZAmbIEHquh58BsUSwBVFyk", "description": "", "author_name": "すぎもと", "maker_url": "https://www.instagram.com/sugimasa_insta/", "genre": "シミュレーション", "thumbnail_url": "https://muse.ai/s/donatuyang-gegemu-xew6ylxqb13xlxa/preview-image?share_key=UoQD449WhUTHJuAtF_kjgZAmbIEHquh58BsUSwBVFyk", "created_at": "2026-11-19T21:03:55.091927+00:00", "clicks": 3 },
+        { "id": 3, "title": "ドーナツデコレーションゲーム", "url": "https://muse.ai/s/donatudekoresiyongemu-ww6ylxqgqxjq2/1OEOmXhlSEPmBuTqepj73S7EPZAvQ6M26zpwabHqp4A", "description": "", "author_name": "すぎもと", "maker_url": "https://www.instagram.com/sugimasa_insta/", "genre": "デコ・おしゃれ", "thumbnail_url": "https://muse.ai/s/donatudekoresiyongemu-ww6ylxqgqxjq2/preview-image?share_key=1OEOmXhlSEPmBuTqepj73S7EPZAvQ6M26zpwabHqp4A", "created_at": "2026-11-19T21:03:54.230691+00:00", "clicks": 0 },
+        { "id": 1, "title": "かふぇ絲スロット", "url": "https://x.gd/apuRX", "description": "カフェがテーマのスロットゲーム。最初の1本として登録。", "author_name": "すぎもと", "maker_url": "https://www.instagram.com/sugimasa_insta/", "genre": "スロット", "thumbnail_url": "https://muse.ai/s/kahuesi-surotuto-qxn6y09xuvbxixa/preview-image?share_key=Inzfcx4DrI3fqNbi4rJGa_0X9kTyZqGaycl45ATwgbI", "created_at": "2026-11-19T20:03:30.553121+00:00", "clicks": 7 }
+      ];
+
       var games = [];
-      var view = "new";           // new | genre | maker
+      var view = "new";           // new | genre | maker | ranking
       var makerFilter = "";       // "" = すべてのメーカー
       var query = "";
+      var sortMode = "recommend"; // recommend | popular | newest
+      var rankPeriod = "month";   // month | year | all
+      var rankCounts = { month: null, year: null };        // period -> { gameId: 回数 }
+      var rankState = { month: "idle", year: "idle" };     // idle | loading | ready | error
+      var RANK_RPC = SUPABASE_URL + "/rest/v1/rpc/get_click_ranking";
       var thumbAttempted = {};    // Microlinkサムネ取得を試したゲームURL（1回だけ）
       var thumbCache = {};        // ゲームURL -> 取得できた画像URL
 
@@ -638,6 +749,8 @@
       var elEmpty = document.getElementById("state-empty");
       var elNoResult = document.getElementById("state-noresult");
       var elNoNew = document.getElementById("state-nonew");
+      var elSnapshot = document.getElementById("state-snapshot");
+      var usingFallback = false;  // いま棚の写しを表示しているかどうか
 
       /* ---------- ジャンル別カバーの色と模様 ---------- */
       var GENRES = ["スロット", "パズル", "クイズ", "アクション", "シューティング", "RPG・育成", "シミュレーション", "ボード・カード", "タイミング・反射", "デコ・おしゃれ", "学習・検定", "その他"];
@@ -690,6 +803,10 @@
         if (isNaN(d.getTime())) return "";
         return d.getFullYear() + "/" + String(d.getMonth() + 1).padStart(2, "0") + "/" + String(d.getDate()).padStart(2, "0");
       }
+      function totalClicks(g) {
+        var c = parseInt(g && g.clicks, 10);
+        return (isNaN(c) || c < 0) ? 0 : c;
+      }
       /* 新着判定：登録日時（created_at）から7日以内だけを新着とする */
       var NEW_WINDOW_MS = 7 * 24 * 60 * 60 * 1000;
       function isNewGame(g) {
@@ -698,6 +815,17 @@
         return t >= Date.now() - NEW_WINDOW_MS;
       }
       /* ---------- パッケージ描画 ---------- */
+      /* カバー部分（サムネ画像 or 自動カバー）。パッケージとランキング行で共用 */
+      function coverHTML(g) {
+        var genre = (g.genre || "その他").trim() || "その他";
+        if (g.thumbnail_url) {
+          // 画像の下地に自動カバーを敷き、画像が読めなかったら自動カバーが見える
+          var st0 = genreStyle(genre);
+          return '<div class="cover"><div class="gen-cover" style="background:linear-gradient(160deg,' + st0.c1 + ',' + st0.c2 + ')"><div class="' + st0.pat + '" style="position:absolute;inset:0"></div><div class="gtitle" style="position:relative">' + esc(g.title) + '</div><div class="ggenre" style="position:relative">' + esc(genre) + '</div></div><img src="' + esc(g.thumbnail_url) + '" alt="' + esc(g.title) + ' のサムネイル" loading="lazy" style="position:absolute;inset:0" onerror="this.remove()" /></div>';
+        }
+        var st = genreStyle(genre);
+        return '<div class="cover"><div class="gen-cover" style="background:linear-gradient(160deg,' + st.c1 + ',' + st.c2 + ')"><div class="' + st.pat + '" style="position:absolute;inset:0"></div><div class="gtitle" style="position:relative">' + esc(g.title) + '</div><div class="ggenre" style="position:relative">' + esc(genre) + '</div></div></div>';
+      }
       function packageHTML(g) {
         var genre = (g.genre || "その他").trim() || "その他";
         var author = (g.author_name || "ななし").trim() || "ななし";
@@ -709,15 +837,7 @@
         var authorInfo = makerLinked
           ? '<a href="' + esc(makerUrl) + '" target="_blank" rel="noopener"><b>' + esc(author) + '</b></a>'
           : '<b>' + esc(author) + '</b>';
-        var cover;
-        if (g.thumbnail_url) {
-          // 画像の下地に自動カバーを敷き、画像が読めなかったら自動カバーが見える
-          var st0 = genreStyle(genre);
-          cover = '<div class="cover"><div class="gen-cover" style="background:linear-gradient(160deg,' + st0.c1 + ',' + st0.c2 + ')"><div class="' + st0.pat + '" style="position:absolute;inset:0"></div><div class="gtitle" style="position:relative">' + esc(g.title) + '</div><div class="ggenre" style="position:relative">' + esc(genre) + '</div></div><img src="' + esc(g.thumbnail_url) + '" alt="' + esc(g.title) + ' のサムネイル" loading="lazy" style="position:absolute;inset:0" onerror="this.remove()" /></div>';
-        } else {
-          var st = genreStyle(genre);
-          cover = '<div class="cover"><div class="gen-cover" style="background:linear-gradient(160deg,' + st.c1 + ',' + st.c2 + ')"><div class="' + st.pat + '" style="position:absolute;inset:0"></div><div class="gtitle" style="position:relative">' + esc(g.title) + '</div><div class="ggenre" style="position:relative">' + esc(genre) + '</div></div></div>';
-        }
+        var cover = coverHTML(g);
         var thumbAttr = g.thumbnail_url ? "" : ' data-thumb-for="' + esc(g.url || "") + '"';
         var gid = esc(g.id == null ? "" : String(g.id));
         var clickCount = parseInt(g.clicks, 10);
@@ -796,8 +916,39 @@
         });
       }
 
+      /* 並べ替え（おすすめ＝いままでの並び／人気＝利用回数が多い順／新着＝登録が新しい順） */
+      function applySort(list) {
+        if (sortMode === "popular") {
+          return list.slice().sort(function (a, b) {
+            var d = totalClicks(b) - totalClicks(a);
+            if (d !== 0) return d;
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          });
+        }
+        if (sortMode === "newest") {
+          return list.slice().sort(function (a, b) {
+            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+          });
+        }
+        return list;
+      }
+
       function render() {
-        var list = filteredGames();
+        // ランキングビューでは並べ替えセレクトは使わない（ランキング自体が順位表示のため）
+        var sortRow = document.getElementById("sort-row");
+        if (sortRow) sortRow.classList.toggle("hidden", view === "ranking");
+        if (view === "ranking") {
+          elEmpty.classList.toggle("hidden", games.length !== 0);
+          elNoResult.classList.add("hidden");
+          elNoNew.classList.add("hidden");
+          var mc = document.getElementById("makerchips");
+          if (mc) mc.innerHTML = "";
+          shelvesEl.innerHTML = games.length > 0 ? rankingHTML() : "";
+          if (rankPeriod !== "all") ensureRankData(rankPeriod);
+          hydrateThumbnails();
+          return;
+        }
+        var list = applySort(filteredGames());
         // 新着の棚は登録から7日以内のゲームだけ（ジャンル別・メーカー別は全件のまま）
         var newList = view === "new" ? list.filter(isNewGame) : list;
         var showEmpty = games.length === 0;
@@ -834,6 +985,111 @@
         return order.map(function (k) { return shelfHTML(k + suffix, map[k]); }).join("");
       }
 
+      /* ---------- ランキング ---------- */
+      /* 日本時間の「いま」の年月（月間＝今月／年間＝今年の集計に使う） */
+      function jstYearMonth() {
+        var jst = new Date(Date.now() + 9 * 60 * 60 * 1000);
+        return { y: jst.getUTCFullYear(), m: jst.getUTCMonth() };
+      }
+      /* 期間の開始（JSTの月初／年初）をUTCのISO文字列で返す */
+      function periodSinceISO(period) {
+        var p = jstYearMonth();
+        var startMs = (period === "month" ? Date.UTC(p.y, p.m, 1) : Date.UTC(p.y, 0, 1)) - 9 * 60 * 60 * 1000;
+        return new Date(startMs).toISOString();
+      }
+      function periodLabel(period) {
+        var p = jstYearMonth();
+        if (period === "month") return p.y + "年" + (p.m + 1) + "月のランキング";
+        if (period === "year") return p.y + "年のランキング";
+        return "総合ランキング";
+      }
+      /* 期間の利用回数を RPC get_click_ranking から取る（取れなければ error のまま劣化表示） */
+      function ensureRankData(period) {
+        if (period === "all") return;
+        if (rankState[period] !== "idle") return;
+        rankState[period] = "loading";
+        fetch(RANK_RPC, {
+          method: "POST",
+          headers: {
+            "apikey": API_KEY,
+            "Authorization": "Bearer " + API_KEY,
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ p_since: periodSinceISO(period) })
+        }).then(function (res) {
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          return res.json();
+        }).then(function (rows) {
+          if (!Array.isArray(rows)) throw new Error("unexpected response");
+          var map = {};
+          rows.forEach(function (r) {
+            if (!r || r.game_id == null) return;
+            var c = parseInt(r.cnt, 10);
+            map[String(r.game_id)] = (isNaN(c) || c < 0) ? 0 : c;
+          });
+          rankCounts[period] = map;
+          rankState[period] = "ready";
+          if (view === "ranking" && rankPeriod === period) render();
+        }).catch(function () {
+          rankState[period] = "error";
+          if (view === "ranking" && rankPeriod === period) render();
+        });
+      }
+      function periodCount(g) {
+        if (rankPeriod === "all") return totalClicks(g);
+        var map = rankCounts[rankPeriod];
+        if (!map) return 0;
+        var c = map[String(g.id)];
+        return (typeof c === "number") ? c : 0;
+      }
+      /* 順位付け：期間の回数 → 総合の回数 → タイトルの順で安定ソート。0回のゲームも末尾に含める */
+      function rankSortedItems() {
+        return games.slice().sort(function (a, b) {
+          var d = periodCount(b) - periodCount(a);
+          if (d !== 0) return d;
+          d = totalClicks(b) - totalClicks(a);
+          if (d !== 0) return d;
+          return String(a.title || "").localeCompare(String(b.title || ""), "ja");
+        }).map(function (g) { return { g: g, cnt: periodCount(g) }; });
+      }
+      function rankingHTML() {
+        var tabs = '<div class="rank-tabs" role="group" aria-label="ランキングの期間">'
+          + '<button type="button" data-rank-period="month" aria-pressed="' + (rankPeriod === "month") + '">月間</button>'
+          + '<button type="button" data-rank-period="year" aria-pressed="' + (rankPeriod === "year") + '">年間</button>'
+          + '<button type="button" data-rank-period="all" aria-pressed="' + (rankPeriod === "all") + '">総合</button>'
+          + '</div>';
+        var head = '<h2 class="rank-title-head">' + esc(periodLabel(rankPeriod)) + '</h2>';
+        var body;
+        if (rankPeriod !== "all" && rankState[rankPeriod] === "error") {
+          body = '<div class="rank-msg">集計の準備中です。総合ランキングをご覧ください。</div>';
+        } else if (rankPeriod !== "all" && rankState[rankPeriod] !== "ready") {
+          body = '<div class="rank-msg">集計しています…</div>';
+        } else {
+          var rows = rankSortedItems().map(function (item, i) {
+            var g = item.g;
+            var rank = i + 1;
+            var author = (g.author_name || "ななし").trim() || "ななし";
+            var gid = esc(g.id == null ? "" : String(g.id));
+            var thumbAttr = g.thumbnail_url ? "" : ' data-thumb-for="' + esc(g.url || "") + '"';
+            return '<a class="rank-row" data-game-open="' + gid + '" href="' + esc(g.url) + '" target="_blank" rel="noopener noreferrer">'
+              + '<span class="rank-badge' + (rank <= 3 ? " r" + rank : "") + '">' + rank + '</span>'
+              + '<span class="rank-thumb"' + thumbAttr + '>' + coverHTML(g) + '</span>'
+              + '<span class="rank-info"><span class="rank-gtitle">' + esc(g.title) + '</span>'
+              + '<span class="rank-maker">メーカー：' + esc(author) + '</span></span>'
+              + '<span class="rank-count">利用 ' + item.cnt + '回</span></a>';
+          }).join("");
+          body = '<div class="rank-list">' + rows + '</div>';
+        }
+        return '<section class="rank-sec">' + tabs + head + body + '</section>';
+      }
+      /* ランキングの期間タブ */
+      shelvesEl.addEventListener("click", function (e) {
+        var btn = e.target && e.target.closest ? e.target.closest("[data-rank-period]") : null;
+        if (!btn) return;
+        rankPeriod = btn.getAttribute("data-rank-period") || "month";
+        render();
+      });
+
       function buildMakerChips() {
         var makers = [], seen = {};
         games.forEach(function (g) {
@@ -848,6 +1104,7 @@
           html += '<button type="button" class="chip" data-maker="' + esc(m) + '" aria-pressed="' + (makerFilter === m) + '">' + esc(m) + '</button>';
         });
         wrap.innerHTML = html;
+        wrap.scrollLeft = 0;
         Array.prototype.forEach.call(wrap.querySelectorAll(".chip"), function (btn) {
           btn.addEventListener("click", function () {
             makerFilter = btn.getAttribute("data-maker") || "";
@@ -1139,9 +1396,18 @@
 
       /* ---------- 読み込み ---------- */
       function load() {
-        elLoading.classList.remove("hidden");
         elError.classList.add("hidden");
-        shelvesEl.innerHTML = "";
+        // まだ何も無い時は、まず棚の写しで中身を見せる（通信が取れない環境でも空にならない）
+        if (games.length === 0 && FALLBACK_GAMES.length > 0) {
+          games = FALLBACK_GAMES.slice();
+          usingFallback = true;
+          elSnapshot.classList.remove("hidden");
+          render();
+        }
+        if (games.length === 0) {
+          elLoading.classList.remove("hidden");
+          shelvesEl.innerHTML = "";
+        }
         fetch(ENDPOINT + "?select=" + SELECT + "&order=created_at.desc", {
           headers: { "apikey": API_KEY, "Authorization": "Bearer " + API_KEY }
         }).then(function (res) {
@@ -1149,18 +1415,28 @@
           return res.json();
         }).then(function (data) {
           games = Array.isArray(data) ? data : [];
+          usingFallback = false;
+          elSnapshot.classList.add("hidden");
           elLoading.classList.add("hidden");
           render();
         }).catch(function () {
           elLoading.classList.add("hidden");
-          elError.classList.remove("hidden");
+          // 写し（または表示済みの中身）がある時はエラー画面にせず、そのまま見せ続ける
+          if (games.length === 0) {
+            elError.classList.remove("hidden");
+          }
         });
       }
       document.getElementById("reload-btn").addEventListener("click", load);
+      document.getElementById("reload-btn2").addEventListener("click", load);
 
       /* ---------- 検索・表示切替 ---------- */
       document.getElementById("search").addEventListener("input", function (e) {
         query = e.target.value;
+        render();
+      });
+      document.getElementById("sort-select").addEventListener("change", function (e) {
+        sortMode = e.target.value;
         render();
       });
       Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function (btn) {
