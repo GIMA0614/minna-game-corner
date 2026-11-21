@@ -231,6 +231,7 @@
         padding: 6px 4px; cursor: pointer; min-height: 2.35rem;
       }
       .rank-tabs button[aria-pressed="true"] { background: var(--chip-on); color: var(--chip-on-ink); }
+      .rank-kind { margin-bottom: 8px; }
       .rank-title-head {
         margin: 12px 0 10px; text-align: center; line-height: 1.35;
         font-family: "Yusei Magic", "M PLUS Rounded 1c", sans-serif; font-weight: 400; font-size: 22px; color: var(--ink);
@@ -243,6 +244,7 @@
         box-shadow: 0 2px 6px rgba(122, 74, 20, .1);
       }
       .rank-row:active { background: #fdf3da; }
+      button.rank-row { font: inherit; text-align: left; width: 100%; cursor: pointer; }
       .rank-badge {
         flex: 0 0 auto; width: 38px; height: 38px; border-radius: 50%;
         display: flex; align-items: center; justify-content: center;
@@ -588,9 +590,8 @@
         <div class="sortrow" id="sort-row">
           <label for="sort-select">並べ替え</label>
           <select id="sort-select" aria-label="棚の並べ替え">
-            <option value="recommend">おすすめ順（いままでの並び）</option>
+            <option value="newest" selected>新着順（登録が新しい順）</option>
             <option value="popular">人気順（利用回数が多い順）</option>
-            <option value="newest">新着順（登録が新しい順）</option>
           </select>
         </div>
         <div class="makerchips" id="makerchips" aria-label="メーカーで絞り込み"></div>
@@ -735,10 +736,13 @@
       var view = "new";           // new | genre | maker | ranking
       var makerFilter = "";       // "" = すべてのメーカー
       var query = "";
-      var sortMode = "recommend"; // recommend | popular | newest
+      var sortMode = "newest";    // newest | popular
       var rankPeriod = "month";   // month | year | all
+      var rankKind = "game";      // game | maker（メーカー別は総合の合計で固定）
       var rankCounts = { month: null, year: null };        // period -> { gameId: 回数 }
       var rankState = { month: "idle", year: "idle" };     // idle | loading | ready | error
+      var rankAllEvents = null;                            // サービス開始からの全イベント数 { gameId: 回数 }
+      var rankAllState = "idle";                           // idle | loading | ready | error
       var RANK_RPC = SUPABASE_URL + "/rest/v1/rpc/get_click_ranking";
       var thumbAttempted = {};    // Microlinkサムネ取得を試したゲームURL（1回だけ）
       var thumbCache = {};        // ゲームURL -> 取得できた画像URL
@@ -916,21 +920,26 @@
         });
       }
 
-      /* 並べ替え（おすすめ＝いままでの並び／人気＝利用回数が多い順／新着＝登録が新しい順） */
+      /* 新着順の比較：登録日時（created_at）が新しい順、同日時なら id の大きい順 */
+      function newestCmp(a, b) {
+        var ta = new Date(a.created_at).getTime();
+        var tb = new Date(b.created_at).getTime();
+        if (!isNaN(ta) && !isNaN(tb) && tb !== ta) return tb - ta;
+        var ia = parseInt(a.id, 10), ib = parseInt(b.id, 10);
+        if (isNaN(ia)) ia = 0;
+        if (isNaN(ib)) ib = 0;
+        return ib - ia;
+      }
+      /* 並べ替え（新着＝登録が新しい順がデフォルト／人気＝利用回数が多い順） */
       function applySort(list) {
         if (sortMode === "popular") {
           return list.slice().sort(function (a, b) {
             var d = totalClicks(b) - totalClicks(a);
             if (d !== 0) return d;
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
+            return newestCmp(a, b);
           });
         }
-        if (sortMode === "newest") {
-          return list.slice().sort(function (a, b) {
-            return new Date(b.created_at).getTime() - new Date(a.created_at).getTime();
-          });
-        }
-        return list;
+        return list.slice().sort(newestCmp);
       }
 
       function render() {
@@ -1003,19 +1012,20 @@
         if (period === "year") return p.y + "年のランキング";
         return "総合ランキング";
       }
-      /* 期間の利用回数を RPC get_click_ranking から取る（取れなければ error のまま劣化表示） */
-      function ensureRankData(period) {
-        if (period === "all") return;
-        if (rankState[period] !== "idle") return;
-        rankState[period] = "loading";
-        fetch(RANK_RPC, {
+      /* サービス開始（2026-11-19 00:00 JST）と、記録開始前の利用（レガシー分）が属する期間の境目 */
+      var SERVICE_START_ISO = new Date(Date.UTC(2026, 10, 19) - 9 * 60 * 60 * 1000).toISOString();
+      var LEGACY_CUTOFF_MS = Date.UTC(2026, 10, 22) - 9 * 60 * 60 * 1000; // 2026-11-22T00:00:00+09:00 相当
+
+      /* RPC get_click_ranking を叩いて { gameId: 回数 } の対応表を返す */
+      function fetchRankMap(sinceISO) {
+        return fetch(RANK_RPC, {
           method: "POST",
           headers: {
             "apikey": API_KEY,
             "Authorization": "Bearer " + API_KEY,
             "Content-Type": "application/json"
           },
-          body: JSON.stringify({ p_since: periodSinceISO(period) })
+          body: JSON.stringify({ p_since: sinceISO })
         }).then(function (res) {
           if (!res.ok) throw new Error("HTTP " + res.status);
           return res.json();
@@ -1027,6 +1037,27 @@
             var c = parseInt(r.cnt, 10);
             map[String(r.game_id)] = (isNaN(c) || c < 0) ? 0 : c;
           });
+          return map;
+        });
+      }
+      /* 期間の利用回数を RPC get_click_ranking から取る（取れなければ error のまま劣化表示） */
+      function ensureRankData(period) {
+        if (period === "all") return;
+        // レガシー分（記録開始前の利用）の計算に使う、サービス開始からの全イベント数も並行して取る
+        if (rankAllState === "idle") {
+          rankAllState = "loading";
+          fetchRankMap(SERVICE_START_ISO).then(function (map) {
+            rankAllEvents = map;
+            rankAllState = "ready";
+            if (view === "ranking" && rankPeriod !== "all") render();
+          }).catch(function () {
+            rankAllState = "error";
+            if (view === "ranking" && rankPeriod !== "all") render();
+          });
+        }
+        if (rankState[period] !== "idle") return;
+        rankState[period] = "loading";
+        fetchRankMap(periodSinceISO(period)).then(function (map) {
           rankCounts[period] = map;
           rankState[period] = "ready";
           if (view === "ranking" && rankPeriod === period) render();
@@ -1035,14 +1066,28 @@
           if (view === "ranking" && rankPeriod === period) render();
         });
       }
+      /* 記録開始前の利用（レガシー分）＝ 累計clicks − サービス開始からの全イベント数 */
+      function legacyCount(g) {
+        if (!rankAllEvents) return 0;
+        var ev = rankAllEvents[String(g.id)];
+        ev = (typeof ev === "number") ? ev : 0;
+        var leg = totalClicks(g) - ev;
+        return leg > 0 ? leg : 0;
+      }
+      /* その期間がレガシー期間（2026-11-19〜21）を含むか：期間の開始が 2026-11-22 00:00 JST より前なら含む */
+      function periodIncludesLegacy(period) {
+        return new Date(periodSinceISO(period)).getTime() < LEGACY_CUTOFF_MS;
+      }
       function periodCount(g) {
         if (rankPeriod === "all") return totalClicks(g);
         var map = rankCounts[rankPeriod];
         if (!map) return 0;
         var c = map[String(g.id)];
-        return (typeof c === "number") ? c : 0;
+        c = (typeof c === "number") ? c : 0;
+        if (periodIncludesLegacy(rankPeriod)) c += legacyCount(g);
+        return c;
       }
-      /* 順位付け：期間の回数 → 総合の回数 → タイトルの順で安定ソート。0回のゲームも末尾に含める */
+      /* 順位付け：期間の回数 → 総合の回数 → タイトルの順で安定ソート。0回のゲームも末尾に含める。表示はトップ10まで */
       function rankSortedItems() {
         return games.slice().sort(function (a, b) {
           var d = periodCount(b) - periodCount(a);
@@ -1050,9 +1095,40 @@
           d = totalClicks(b) - totalClicks(a);
           if (d !== 0) return d;
           return String(a.title || "").localeCompare(String(b.title || ""), "ja");
-        }).map(function (g) { return { g: g, cnt: periodCount(g) }; });
+        }).map(function (g) { return { g: g, cnt: periodCount(g) }; }).slice(0, 10);
+      }
+      /* メーカー別：そのメーカーの全ゲームの累計利用回数の合計で順位付け。表示はトップ10まで */
+      function makerRankItems() {
+        var map = {}, order = [];
+        games.forEach(function (g) {
+          var name = (g.author_name || "ななし").trim() || "ななし";
+          if (!map[name]) { map[name] = { name: name, total: 0, count: 0 }; order.push(map[name]); }
+          map[name].total += totalClicks(g);
+          map[name].count += 1;
+        });
+        return order.sort(function (a, b) {
+          if (b.total !== a.total) return b.total - a.total;
+          if (b.count !== a.count) return b.count - a.count;
+          return a.name.localeCompare(b.name, "ja");
+        }).slice(0, 10);
       }
       function rankingHTML() {
+        var kindTabs = '<div class="rank-tabs rank-kind" role="group" aria-label="ランキングの種類">'
+          + '<button type="button" data-rank-kind="game" aria-pressed="' + (rankKind === "game") + '">ゲーム別</button>'
+          + '<button type="button" data-rank-kind="maker" aria-pressed="' + (rankKind === "maker") + '">メーカー別</button>'
+          + '</div>';
+        if (rankKind === "maker") {
+          var mhead = '<h2 class="rank-title-head">メーカー別ランキング</h2>';
+          var mrows = makerRankItems().map(function (item, i) {
+            var mrank = i + 1;
+            return '<button type="button" class="rank-row" data-rank-maker="' + esc(item.name) + '">'
+              + '<span class="rank-badge' + (mrank <= 3 ? " r" + mrank : "") + '">' + mrank + '</span>'
+              + '<span class="rank-info"><span class="rank-gtitle">' + esc(item.name) + '</span>'
+              + '<span class="rank-maker">ゲーム ' + item.count + '本</span></span>'
+              + '<span class="rank-count">利用 ' + item.total + '回</span></button>';
+          }).join("");
+          return '<section class="rank-sec">' + kindTabs + mhead + '<div class="rank-list">' + mrows + '</div></section>';
+        }
         var tabs = '<div class="rank-tabs" role="group" aria-label="ランキングの期間">'
           + '<button type="button" data-rank-period="month" aria-pressed="' + (rankPeriod === "month") + '">月間</button>'
           + '<button type="button" data-rank-period="year" aria-pressed="' + (rankPeriod === "year") + '">年間</button>'
@@ -1060,9 +1136,9 @@
           + '</div>';
         var head = '<h2 class="rank-title-head">' + esc(periodLabel(rankPeriod)) + '</h2>';
         var body;
-        if (rankPeriod !== "all" && rankState[rankPeriod] === "error") {
+        if (rankPeriod !== "all" && (rankState[rankPeriod] === "error" || rankAllState === "error")) {
           body = '<div class="rank-msg">集計の準備中です。総合ランキングをご覧ください。</div>';
-        } else if (rankPeriod !== "all" && rankState[rankPeriod] !== "ready") {
+        } else if (rankPeriod !== "all" && (rankState[rankPeriod] !== "ready" || rankAllState !== "ready")) {
           body = '<div class="rank-msg">集計しています…</div>';
         } else {
           var rows = rankSortedItems().map(function (item, i) {
@@ -1080,11 +1156,30 @@
           }).join("");
           body = '<div class="rank-list">' + rows + '</div>';
         }
-        return '<section class="rank-sec">' + tabs + head + body + '</section>';
+        return '<section class="rank-sec">' + kindTabs + tabs + head + body + '</section>';
       }
-      /* ランキングの期間タブ */
+      /* ランキングの期間タブ／種類トグル／メーカー行 */
       shelvesEl.addEventListener("click", function (e) {
-        var btn = e.target && e.target.closest ? e.target.closest("[data-rank-period]") : null;
+        if (!e.target || !e.target.closest) return;
+        var kbtn = e.target.closest("[data-rank-kind]");
+        if (kbtn) {
+          rankKind = kbtn.getAttribute("data-rank-kind") || "game";
+          render();
+          return;
+        }
+        var mbtn = e.target.closest("[data-rank-maker]");
+        if (mbtn) {
+          // メーカー行を押したら、メーカー別の棚でそのメーカーに絞り込む
+          makerFilter = mbtn.getAttribute("data-rank-maker") || "";
+          view = "maker";
+          Array.prototype.forEach.call(document.querySelectorAll(".seg button"), function (b) {
+            b.setAttribute("aria-pressed", b.getAttribute("data-view") === "maker" ? "true" : "false");
+          });
+          render();
+          window.scrollTo({ top: 0, behavior: "smooth" });
+          return;
+        }
+        var btn = e.target.closest("[data-rank-period]");
         if (!btn) return;
         rankPeriod = btn.getAttribute("data-rank-period") || "month";
         render();
